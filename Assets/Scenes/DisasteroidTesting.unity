@@ -352,6 +352,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FirstPersonCamera: {fileID: 896679035}
+  earthPrefab: {fileID: 1510229279267279425, guid: 53cd756b88703454b98da28a5277c10b,
+    type: 3}
 --- !u!4 &1039114787
 Transform:
   m_ObjectHideFlags: 0

@@ -19,6 +19,9 @@ public class ARController : MonoBehaviour
     /// </summary>
     public Camera FirstPersonCamera;
 
+    public GameObject earthPrefab;
+    private GameObject earthInstance;
+
     /// <summary>
     /// True if the app is in the process of quitting due to an ARCore connection error,
     /// otherwise false.
@@ -26,7 +29,7 @@ public class ARController : MonoBehaviour
     private bool m_IsQuitting = false;
 
     private List<AugmentedImage> trackedImages = new List<AugmentedImage>();
-    public Dictionary<int, Anchor> imageAnchors = new Dictionary<int, Anchor>();
+    //public Dictionary<int, Anchor> imageAnchors = new Dictionary<int, Anchor>();
 
     /// <summary>
     /// The Unity Awake() method.
@@ -56,13 +59,21 @@ public class ARController : MonoBehaviour
         {
             Debug.Log(image.DatabaseIndex);
 
-            Anchor imageAnchor;
-            imageAnchors.TryGetValue(image.DatabaseIndex, out imageAnchor);
-
-            if (image.TrackingState == TrackingState.Tracking && imageAnchor == null)
+            //Anchor imageAnchor;
+            //imageAnchors.TryGetValue(image.DatabaseIndex, out imageAnchor);
+            
+            if (image.TrackingState == TrackingState.Tracking && earthInstance == null)
             {
-                imageAnchor = image.CreateAnchor(image.CenterPose);
-                imageAnchors.Add(image.DatabaseIndex, imageAnchor);
+                Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
+                //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
+
+                //Transform anchorTransform = imageAnchor.transform;
+                //anchorTransform.Translate
+                earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
+            }
+            else if (image.TrackingState == TrackingState.Stopped)
+            {
+                Destroy(earthInstance);
             }
         }
     }
