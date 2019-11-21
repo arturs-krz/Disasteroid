@@ -16,9 +16,16 @@ public class AsteroidManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Vector3 pos = transform.position + AsteroidSpawner.position;
-        // this.rigidBody.AddForce(-10000 * pos.normalized / pos.sqrMagnitude);
+        Vector3 pos = ARController.Instance.earthInstance.transform.position - transform.position;
+        this.rigidBody.AddForce(Time.deltaTime * 0.95f * pos.normalized / pos.sqrMagnitude);
         //this.rigidBody.AddForce(-1 * pos.normalized / pos.sqrMagnitude);
+
+        // Destroy if it gets away
+        if (pos.magnitude > 2.2f)
+        {
+            Destroy(gameObject);
+            AsteroidSpawner.numberOfAsteroids -= 1;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -28,7 +35,7 @@ public class AsteroidManager : MonoBehaviour
         AsteroidSpawner.numberOfAsteroids -= 1;
         GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
         GameControl gameControl = gameController.GetComponent<GameControl>();
-        gameControl.PD.value += gameControl.PD.maxValue / 30;
+        gameControl.PD.value -= gameControl.PD.maxValue / 30;
         gameControl.CO2.value += gameControl.CO2.maxValue / 60;
 
     }

@@ -16,9 +16,12 @@ public class GameControl : MonoBehaviour
     {
         gameover.SetActive(false);
         if (PlayerPrefs.GetString("Username") == "")
+        {
             PlayerPrefs.SetString("Username", "John Doe");
+        }
+
         userDisplay.text = PlayerPrefs.GetString("Username").ToString() + " is playing!";
-        PD.value = PD.minValue;
+        PD.value = PD.maxValue / 2;
         WL.value = PD.minValue;
         CO2.value = PD.minValue;
     }
@@ -45,7 +48,7 @@ public class GameControl : MonoBehaviour
     {
         WL.value += Time.deltaTime * CO2.value / 10;
         PD.value += Time.deltaTime * CO2.value / 30;
-        CO2.value += Time.deltaTime * (PD.maxValue - PD.value) / 30;
+        CO2.value += Time.deltaTime * (PD.maxValue - PD.value) * 0.01f;
         // if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)
         // {
         //     GameOver();

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4761641450705125077}
   - component: {fileID: 8255948029533726033}
   - component: {fileID: 5535400565142586624}
+  - component: {fileID: 9022676334437146207}
   m_Layer: 0
   m_Name: Asteroid
   m_TagString: asteroid
@@ -30,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 8436573884608014105}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -105,11 +106,11 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8436573884608014105}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
+  m_IsTrigger: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.38703877
-  m_Center: {x: 0.038734287, y: 0.022742577, z: 0.07675703}
+  m_Radius: 0.40572914
+  m_Center: {x: 0.057424653, y: 0.0227426, z: 0.07675702}
 --- !u!114 &5535400565142586624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,3 +124,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidBody: {fileID: 4761641450705125077}
+--- !u!136 &9022676334437146207
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8436573884608014105}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.25
+  m_Height: 0.8
+  m_Direction: 2
+  m_Center: {x: 0.038734287, y: 0.022742577, z: 0.07675703}
