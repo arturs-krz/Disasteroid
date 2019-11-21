@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - ManipulationSystem
+  - earth
+  - asteroid
   layers:
   - Default
   - TransparentFX
