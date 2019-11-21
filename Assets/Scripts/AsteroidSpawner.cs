@@ -8,7 +8,9 @@ public class AsteroidSpawner : MonoBehaviour
     public static int numberOfAsteroids;
     public GameObject asteroid;
     public static Vector3 position = new Vector3(0,0,0);
-    // Start is called before the first frame update
+    
+    private bool hasEarthPosition = false;
+
     void Start()
     {
         transform.position = position;
@@ -18,7 +20,13 @@ public class AsteroidSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (numberOfAsteroids <= 10)
+        if (ARController.Instance.earthInstance != null) 
+        {
+            position = ARController.Instance.earthInstance.transform.position;
+            hasEarthPosition = true;
+        }
+
+        if (hasEarthPosition && numberOfAsteroids <= 10)
         {
             System.Random rd = new System.Random();
             float distance = 50 + 50 * (float) rd.NextDouble();

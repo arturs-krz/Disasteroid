@@ -13,6 +13,9 @@ using UnityEngine;
 public class ARController : MonoBehaviour
 {
 
+    private static ARController _instance;
+    public static ARController Instance { get { return _instance; } }
+
     /// <summary>
     /// The first-person camera being used to render the passthrough camera image (i.e. AR
     /// background).
@@ -20,7 +23,7 @@ public class ARController : MonoBehaviour
     public Camera FirstPersonCamera;
 
     public GameObject earthPrefab;
-    private GameObject earthInstance;
+    public GameObject earthInstance { get; private set; }
 
     /// <summary>
     /// True if the app is in the process of quitting due to an ARCore connection error,
@@ -36,6 +39,15 @@ public class ARController : MonoBehaviour
     /// </summary>
     public void Awake()
     {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+        
         // Enable ARCore to target 60fps camera capture frame rate on supported devices.
         // Note, Application.targetFrameRate is ignored when QualitySettings.vSyncCount != 0.
         Application.targetFrameRate = 60;
