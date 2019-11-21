@@ -22,7 +22,7 @@ public class AsteroidManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.tag);    
+        //Debug.Log(other.gameObject.tag);    
         Destroy(gameObject);
         AsteroidSpawner.numberOfAsteroids -= 1;
         GameObject gameController = GameObject.FindGameObjectWithTag("GameController");

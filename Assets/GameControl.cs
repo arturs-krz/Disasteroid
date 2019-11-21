@@ -46,7 +46,9 @@ public class GameControl : MonoBehaviour
         WL.value += Time.deltaTime * CO2.value / 10;
         PD.value += Time.deltaTime * CO2.value / 30;
         CO2.value += Time.deltaTime * (PD.maxValue - PD.value) / 30;
-        if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)
-            GameOver();
+        // if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)
+        // {
+        //     GameOver();
+        // }
     }
 }
