@@ -67,9 +67,8 @@ public class ARController : MonoBehaviour
                 Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
                 //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
 
-                //Transform anchorTransform = imageAnchor.transform;
-                //anchorTransform.Translate
                 earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
+                earthInstance.transform.Translate(new Vector3(0, 0.2f, 0), Space.World);
             }
             else if (image.TrackingState == TrackingState.Stopped)
             {
