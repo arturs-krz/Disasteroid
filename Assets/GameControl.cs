@@ -26,10 +26,7 @@ public class GameControl : MonoBehaviour
     public void BombAttack()
     {
         PD.value += PD.maxValue / 10;
-        WL.value += WL.maxValue / 20;
         CO2.value += CO2.maxValue / 5;
-        if(PD.value >= PD.maxValue && WL.value >= WL.maxValue && CO2.value >= CO2.maxValue)
-            GameOver();
     }
 
     public void BacktoMain()
@@ -46,6 +43,10 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        WL.value += Time.deltaTime * CO2.value / 10;
+        PD.value += Time.deltaTime * CO2.value / 30;
+        CO2.value += Time.deltaTime * (PD.maxValue - PD.value) / 30;
+        if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)
+            GameOver();
     }
 }

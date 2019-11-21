@@ -5,13 +5,14 @@ using System;
 
 public class AsteroidSpawner : MonoBehaviour
 {
-    public static int numberOfAsteroids = 0;
+    public static int numberOfAsteroids;
     public GameObject asteroid;
     public static Vector3 position = new Vector3(0,0,0);
     // Start is called before the first frame update
     void Start()
     {
         transform.position = position;
+        numberOfAsteroids = 0;
     }
 
     // Update is called once per frame

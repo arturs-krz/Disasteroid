@@ -25,6 +25,10 @@ public class AsteroidManager : MonoBehaviour
         Debug.Log(other.gameObject.tag);    
         Destroy(gameObject);
         AsteroidSpawner.numberOfAsteroids -= 1;
+        GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
+        GameControl gameControl = gameController.GetComponent<GameControl>();
+        gameControl.PD.value += gameControl.PD.maxValue / 30;
+        gameControl.CO2.value += gameControl.CO2.maxValue / 60;
 
     }
 }
