@@ -17,7 +17,7 @@ public class AsteroidManager : MonoBehaviour
     void Update()
     {
         Vector3 pos = transform.position + AsteroidSpawner.position;
-        this.rigidBody.AddForce(-100 * pos.normalized / pos.sqrMagnitude);
+        this.rigidBody.AddForce(-10000 * pos.normalized / pos.sqrMagnitude);
     }
 
     private void OnTriggerEnter(Collider other)
