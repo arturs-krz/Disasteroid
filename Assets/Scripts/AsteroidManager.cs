@@ -16,8 +16,9 @@ public class AsteroidManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 pos = transform.position + AsteroidSpawner.position;
-        this.rigidBody.AddForce(-10000 * pos.normalized / pos.sqrMagnitude);
+        //Vector3 pos = transform.position + AsteroidSpawner.position;
+        // this.rigidBody.AddForce(-10000 * pos.normalized / pos.sqrMagnitude);
+        //this.rigidBody.AddForce(-1 * pos.normalized / pos.sqrMagnitude);
     }
 
     private void OnTriggerEnter(Collider other)
