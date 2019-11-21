@@ -4,13 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/GameStart.unity
-    guid: 126370d0cb3ad416e8c0821d7cc3705a
-  - enabled: 1
-    path: Assets/Scenes/Disasteroid.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  m_configObjects:
-    com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: 5c875bbb6709542f39cd0c2a9f70acca,
-      type: 2}
+  m_Scenes: []
+  m_configObjects: {}
