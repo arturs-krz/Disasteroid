@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GoogleARCore;
 using UnityEngine;
-
+using Photon.Pun;
 
 #if UNITY_EDITOR
     // Set up touch input propagation while using Instant Preview in the editor.
@@ -31,6 +31,8 @@ public class ARController : MonoBehaviour
     /// </summary>
     private bool m_IsQuitting = false;
 
+    private bool isAndroid = true;
+
     private List<AugmentedImage> trackedImages = new List<AugmentedImage>();
     //public Dictionary<int, Anchor> imageAnchors = new Dictionary<int, Anchor>();
 
@@ -56,7 +58,13 @@ public class ARController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        isAndroid = Application.platform == RuntimePlatform.Android;
+        if (!isAndroid)
+        {
+            // If we're not on Android, insantiate earth at origin and disable GameObject
+            earthInstance = Instantiate(earthPrefab, new Vector3(0, 0.2f, 0), Quaternion.identity);
+            gameObject.SetActive(false);
+        }
     }
     /// <summary>
     /// The Unity Update() method.
@@ -69,7 +77,7 @@ public class ARController : MonoBehaviour
 
         foreach (AugmentedImage image in trackedImages)
         {
-            Debug.Log(image.DatabaseIndex);
+            //Debug.Log(image.DatabaseIndex);
 
             //Anchor imageAnchor;
             //imageAnchors.TryGetValue(image.DatabaseIndex, out imageAnchor);
@@ -81,6 +89,11 @@ public class ARController : MonoBehaviour
 
                 earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
                 earthInstance.transform.Translate(new Vector3(0, 0.2f, 0), Space.World);
+
+                // When on mobile, join the game only after we've insantiated the earth
+                // and know the world origin.
+                PhotonGameLobby.Instance.JoinGame();
+                //PhotonNetwork.JoinRoom("DiasteroidMain");
             }
             else if (image.TrackingState == TrackingState.Stopped)
             {
