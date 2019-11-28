@@ -9,7 +9,10 @@ public class GameControl : MonoBehaviour
     public Slider PD;
     public Slider WL;
     public Slider CO2;
+    int moneyValue;
+    double bombPrice = 10e7;
     public Text userDisplay;
+    public Text moneyDisplay;
     public GameObject gameover;
     // Start is called before the first frame update
     void Start()
@@ -20,8 +23,11 @@ public class GameControl : MonoBehaviour
             PlayerPrefs.SetString("Username", "John Doe");
         }
 
-        userDisplay.text = PlayerPrefs.GetString("Username").ToString() + " is playing!";
+        //userDisplay.text = PlayerPrefs.GetString("Username").ToString() + " is playing!";
+        userDisplay.text = PlayerPrefs.GetString("Username").ToString();
         PD.value = PD.maxValue / 2;
+        moneyValue = (int)(PD.value * 10e8);
+        moneyDisplay.text = moneyValue.ToString();
         WL.value = PD.minValue;
         CO2.value = PD.minValue;
     }
@@ -29,7 +35,14 @@ public class GameControl : MonoBehaviour
     public void BombAttack()
     {
         PD.value += PD.maxValue / 10;
-        CO2.value += CO2.maxValue / 5;
+        CO2.value += 100 / 5;
+        moneyValue = (int)(PD.value * 10e8 - bombPrice);
+        moneyDisplay.text = moneyValue.ToString();
+    }
+
+    public void SatelitteScan()
+    {
+        
     }
 
     public void BacktoMain()
@@ -47,8 +60,9 @@ public class GameControl : MonoBehaviour
     void Update()
     {
         WL.value += Time.deltaTime * CO2.value / 10;
-        PD.value += Time.deltaTime * CO2.value / 30;
-        CO2.value += Time.deltaTime * (PD.maxValue - PD.value) * 0.01f;
+        PD.value += Time.deltaTime * CO2.value / 20;
+        CO2.value += Time.deltaTime * (PD.maxValue - PD.value) * 0.001f;
+        moneyDisplay.text = moneyValue.ToString();
         // if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)
         // {
         //     GameOver();
