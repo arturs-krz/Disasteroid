@@ -7,6 +7,8 @@ public class AsteroidManager : MonoBehaviour
 {
 
     public Rigidbody rigidBody;
+
+    public float force = 0.95f;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +19,7 @@ public class AsteroidManager : MonoBehaviour
     void Update()
     {
         Vector3 pos = ARController.Instance.earthInstance.transform.position - transform.position;
-        this.rigidBody.AddForce(Time.deltaTime * 0.95f * pos.normalized / pos.sqrMagnitude);
+        this.rigidBody.AddForce(force * pos.normalized / pos.sqrMagnitude);
         //this.rigidBody.AddForce(-1 * pos.normalized / pos.sqrMagnitude);
 
         // Destroy if it gets away
@@ -38,5 +40,34 @@ public class AsteroidManager : MonoBehaviour
         gameControl.PD.value -= gameControl.PD.maxValue / 30;
         gameControl.CO2.value += gameControl.CO2.maxValue / 60;
 
+    }
+
+    List<Vector3> ComputePredictedOrbit()
+    {
+        List<Vector3> positions = new List<Vector3>();
+        Vector3 earthObjectVector = ARController.Instance.earthInstance.transform.position - transform.position;
+        Vector3 acceleration = force * earthObjectVector.normalized / earthObjectVector.sqrMagnitude / rigidBody.mass;
+        Vector3 velocity = rigidBody.velocity;
+        Vector3 position = transform.position;
+        float t = 0.02f;
+        positions.Add(position);
+        while (true)
+        {
+            
+            position += velocity * t;
+            velocity += acceleration * t;
+            earthObjectVector = ARController.Instance.earthInstance.transform.position - position;
+            acceleration = force * earthObjectVector.normalized / earthObjectVector.sqrMagnitude / rigidBody.mass;
+            positions.Add(position);
+            if(earthObjectVector.sqrMagnitude< 1)
+            {
+                break;
+            }
+            if (positions.Count > 2000)
+            {
+                break;
+            }
+        }
+        return positions;
     }
 }

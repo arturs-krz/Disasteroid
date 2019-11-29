@@ -51,7 +51,6 @@ public class AsteroidSpawner : MonoBehaviour
             Vector3 earthDirection = (ARController.Instance.earthInstance.transform.position - spawnPosition).normalized;
             Vector3 velocity = new Vector3(earthDirection.x + GenerateRandomOffset(0.8f), GenerateRandomOffset(0.3f), earthDirection.z + GenerateRandomOffset(0.8f)) * 0.08f;
 
-
             GameObject spawnedAsteroid = Instantiate(asteroid, spawnPosition, new Quaternion(x, y, z, w));
             Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
             rigidbody.angularVelocity = angularVelocity;
