@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1193312457402343929}
   - component: {fileID: 1781275188972325648}
   - component: {fileID: -862298571581273694}
+  - component: {fileID: -9145413521115783486}
   m_Layer: 0
   m_Name: lowpoly_earth
   m_TagString: Untagged
@@ -107,3 +108,19 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.9
   m_Center: {x: -0.009745926, y: 0.006980717, z: -0.0042635202}
+--- !u!54 &-9145413521115783486
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510229279267279425}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
