@@ -25,6 +25,8 @@ public class ARController : MonoBehaviour
     public GameObject earthPrefab;
     public GameObject earthInstance { get; private set; }
 
+    private GameObject earthSync;
+
     /// <summary>
     /// True if the app is in the process of quitting due to an ARCore connection error,
     /// otherwise false.
@@ -63,6 +65,8 @@ public class ARController : MonoBehaviour
         {
             // If we're not on Android, insantiate earth at origin and disable GameObject
             earthInstance = Instantiate(earthPrefab, new Vector3(0, 0.2f, 0), Quaternion.identity);
+            earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0.2f, 0), Quaternion.identity);
+
             gameObject.SetActive(false);
         }
     }
