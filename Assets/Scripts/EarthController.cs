@@ -7,7 +7,7 @@ using System.Collections;
 /// instantiated seperately for each client.
 /// </summary>
 public class EarthController : MonoBehaviour {
-    public float speed = 0.00001f;
+    private float speed = 0.25f;
 
     private Rigidbody rb;
 
@@ -19,7 +19,7 @@ public class EarthController : MonoBehaviour {
         // update all the time and can only
         // occasionally check whether the current rotation is the same
         // between clients.
-        Vector3 angularVel = rb.transform.up.normalized * 0.25f;
+        Vector3 angularVel = rb.transform.up.normalized * speed;
         rb.angularVelocity = angularVel;
 
 

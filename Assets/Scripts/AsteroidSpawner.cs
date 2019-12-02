@@ -1,4 +1,4 @@
-﻿﻿using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -59,8 +59,9 @@ public class AsteroidSpawner : MonoBehaviour
                 Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
                 rigidbody.angularVelocity = angularVelocity;
                 rigidbody.velocity = velocity;
-
-                //spawnedAsteroid.transform.localScale += spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f);
+                
+                Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f));
+                spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
 
                 //float xPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));
                 //float zPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));

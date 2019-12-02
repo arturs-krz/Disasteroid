@@ -8,13 +8,35 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
     private Rigidbody rb;
 
-    Vector3 lastPosition;
-    Quaternion lastRotation;
+    /// <summary>
+    /// The initial scaling of the asteroid when it's spawned.
+    /// Used to calculate the forced perspective afterwards
+    /// </summary>
+    private Vector3 baseScale;
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Relative Earth position. Vector from the asteroid to Earth.
+    /// </summary>
+    private Vector3 earthPos;
+
+    /// <summary>
+    /// Initial relative Earth position.
+    /// Used to calculate the forced perspective.
+    /// </summary>
+    private Vector3 initialEarthPos;
+
+    //private Vector3 lastPosition;
+    //private Quaternion lastRotation;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        
+        // Get the position of the Earth instance and calculate the position vector against it.
+        earthPos = ARController.Instance.earthInstance.transform.position - transform.position;
+        initialEarthPos = earthPos;
+
+        baseScale = transform.localScale;
     }
 
     // Update is called once per frame
@@ -23,22 +45,35 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
     }
 
+    /// <summary>
+    /// Manually specify the initial scale of the asteroid.
+    /// </summary>
+    /// <param name="scale">transform.localScale</param>
+    public void SetInitialScale(Vector3 scale)
+    {
+        baseScale = scale;
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         // This will be true for the master client who is spawning the asteroids
         if (stream.IsWriting)
         {
+            // Send all the physics properties from the master simulation.
             stream.SendNext(rb.velocity);
             stream.SendNext(rb.angularVelocity);
+            stream.SendNext(transform.localScale);
 
             stream.SendNext(rb.position);
             stream.SendNext(rb.rotation);
         }
         else
         {
-            // sync on the other clients
+            // Sync on the other clients
             rb.velocity = (Vector3)stream.ReceiveNext();
             rb.angularVelocity = (Vector3)stream.ReceiveNext();
+
+            transform.localScale = (Vector3)stream.ReceiveNext();
 
             //lastPosition = (Vector3)stream.ReceiveNext();
             //lastRotation = (Quaternion)stream.ReceiveNext();
@@ -48,25 +83,30 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             rb.position = (Vector3)stream.ReceiveNext() + ARController.Instance.earthInstance.transform.position;
             rb.rotation = (Quaternion)stream.ReceiveNext();
 
-
+            // Calculate the time delta (lag) between current server time and when the latest update was sent
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
-            rb.position = rb.position + (rb.velocity * lag); // Compensate position
+            // Compensate position
+            rb.position = rb.position + (rb.velocity * lag);
         }
     }
 
     void FixedUpdate()
     {
+        // On the master client (IsMine true for the owner of object)
         if (photonView.IsMine)
         {
-            Vector3 pos = ARController.Instance.earthInstance.transform.position - transform.position;
-            rb.AddForce(Time.fixedDeltaTime * 1f * pos.normalized / pos.sqrMagnitude);
+            earthPos = ARController.Instance.earthInstance.transform.position - transform.position;
+            rb.AddForce(Time.fixedDeltaTime * 1f * earthPos.normalized / earthPos.sqrMagnitude);
 
             // Destroy if it gets away
-            if (pos.magnitude > 2.2f)
+            if (earthPos.magnitude > 2.2f)
             {
                 PhotonNetwork.Destroy(gameObject);
                 AsteroidSpawner.numberOfAsteroids -= 1;
             }
+
+            // Forced perspective. Make it appear slightly smaller if it's close to earth.
+            transform.localScale = baseScale * Mathf.Clamp((earthPos.magnitude / initialEarthPos.magnitude) + 0.5f, 0.5f, 1.0f);
         }
         //else
         //{
