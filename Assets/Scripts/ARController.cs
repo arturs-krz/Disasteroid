@@ -64,8 +64,8 @@ public class ARController : MonoBehaviour
         if (!isAndroid)
         {
             // If we're not on Android, insantiate earth at origin and disable GameObject
-            earthInstance = Instantiate(earthPrefab, new Vector3(0, 0.2f, 0), Quaternion.identity);
-            earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0.2f, 0), Quaternion.identity);
+            earthInstance = Instantiate(earthPrefab, new Vector3(0, 0.3f, 0), Quaternion.identity);
+            earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0.3f, 0), Quaternion.identity);
 
             gameObject.SetActive(false);
         }
@@ -92,7 +92,7 @@ public class ARController : MonoBehaviour
                 //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
 
                 earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
-                earthInstance.transform.Translate(new Vector3(0, 0.2f, 0), Space.World);
+                earthInstance.transform.Translate(new Vector3(0, 0.3f, 0), Space.World);
 
                 // When on mobile, join the game only after we've insantiated the earth
                 // and know the world origin.
