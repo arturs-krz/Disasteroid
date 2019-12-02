@@ -64,8 +64,8 @@ public class ARController : MonoBehaviour
         if (!isAndroid)
         {
             // If we're not on Android, insantiate earth at origin and disable GameObject
-            earthInstance = Instantiate(earthPrefab, new Vector3(0, 0.3f, 0), Quaternion.identity);
-            earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0.3f, 0), Quaternion.identity);
+            earthInstance = Instantiate(earthPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0, 0), Quaternion.identity);
 
             gameObject.SetActive(false);
         }
