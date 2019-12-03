@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6455432418278184210}
   m_Layer: 0
   m_Name: EarthSyncDummy
-  m_TagString: Untagged
+  m_TagString: EarthSync
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
+  Synchronization: 2
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 6455432418278184210}
@@ -66,3 +66,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae1956e5639f14ffd84bd6f9abf20389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status: {fileID: 0}

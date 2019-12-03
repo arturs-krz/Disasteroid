@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GoogleARCore;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 #if UNITY_EDITOR
@@ -12,7 +13,6 @@ using Photon.Pun;
 
 public class ARController : MonoBehaviour
 {
-
     private static ARController _instance;
     public static ARController Instance { get { return _instance; } }
 
@@ -25,7 +25,12 @@ public class ARController : MonoBehaviour
     public GameObject earthPrefab;
     public GameObject earthInstance { get; private set; }
 
+    public Transform anchorTransform { get; private set; }
+
+    public GameObject earthMarker { get; private set; }
+
     private GameObject earthSync;
+    private bool fedLatestInstance = false; // whether latest earth instance is fed to the sync object
 
     /// <summary>
     /// True if the app is in the process of quitting due to an ARCore connection error,
@@ -66,8 +71,9 @@ public class ARController : MonoBehaviour
             // If we're not on Android, insantiate earth at origin and disable GameObject
             earthInstance = Instantiate(earthPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0, 0), Quaternion.identity);
+            earthSync.GetComponent<EarthRotationSync>().FeedEarthInstance(earthInstance);
 
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
         }
     }
     /// <summary>
@@ -75,6 +81,10 @@ public class ARController : MonoBehaviour
     /// </summary>
     public void Update()
     {
+        if (!isAndroid) {
+            return;
+        }
+
         UpdateApplicationLifecycle();
 
         Session.GetTrackables<AugmentedImage>(trackedImages, TrackableQueryFilter.Updated);
@@ -93,6 +103,16 @@ public class ARController : MonoBehaviour
 
                 earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
                 earthInstance.transform.Translate(new Vector3(0, 0.3f, 0), Space.World);
+                anchorTransform = imageAnchor.transform;
+
+                earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);
+                earthMarker.transform.position = earthInstance.transform.position;
+
+                GameObject environmentalLight = GameObject.FindWithTag("EnvironmentalLight");
+                environmentalLight.transform.SetParent(earthMarker.transform);
+                environmentalLight.transform.localPosition = new Vector3(0,0,-1);
+
+                fedLatestInstance = false;
 
                 // When on mobile, join the game only after we've insantiated the earth
                 // and know the world origin.
@@ -102,7 +122,18 @@ public class ARController : MonoBehaviour
             else if (image.TrackingState == TrackingState.Stopped)
             {
                 Destroy(earthInstance);
+                Destroy(earthMarker);
             }
+        }
+
+        if (earthSync == null)
+        {
+            earthSync = GameObject.FindWithTag("EarthSync");
+        }
+        else if (earthSync != null && earthInstance != null && !fedLatestInstance)
+        {
+            earthSync.GetComponent<EarthRotationSync>().FeedEarthInstance(earthInstance);
+            fedLatestInstance = true;
         }
     }
 

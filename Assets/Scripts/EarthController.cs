@@ -7,7 +7,7 @@ using System.Collections;
 /// instantiated seperately for each client.
 /// </summary>
 public class EarthController : MonoBehaviour {
-    private float speed = 0.25f;
+    private float speed = 0.15f;
 
     private Rigidbody rb;
 
