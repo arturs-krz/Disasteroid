@@ -7,6 +7,8 @@ TagManager:
   - ManipulationSystem
   - asteroid
   - Earth
+  - EnvironmentalLight
+  - EarthSync
   layers:
   - Default
   - TransparentFX

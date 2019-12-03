@@ -10,6 +10,10 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     private static PhotonGameLobby _instance;
     public static PhotonGameLobby Instance { get { return _instance; } }
 
+    private RoomInfo gameRoom = null;
+
+    public bool connected { get; private set; } = false;
+
     public void Awake()
     {
         if (_instance != null && _instance != this)
@@ -26,7 +30,7 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.PhotonServerSettings.AppSettings.AppVersion = "0.1";
+            PhotonNetwork.PhotonServerSettings.AppSettings.AppVersion = "0.2";
             PhotonNetwork.ConnectUsingSettings();
         }   
     }
@@ -45,23 +49,44 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Connected to the master server!");
-        //PhotonNetwork.JoinLobby(TypedLobby.Default);
 
         // Join the room right away only if not on mobile
         if (Application.platform != RuntimePlatform.Android)
         {
-            JoinGame();
+            CreateGame();
+        }
+        else 
+        {
+            PhotonNetwork.JoinLobby(TypedLobby.Default);
         }
     }
 
-    public void JoinGame()
+    private void CreateGame()
     {
-        Debug.Log("Trying to join existing room or creating...");
+        Debug.Log("Creating room...");
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsOpen = true;
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 20;
-        PhotonNetwork.JoinOrCreateRoom("DisasteroidMain", roomOptions, TypedLobby.Default);
+        PhotonNetwork.CreateRoom("DisasteroidMain", roomOptions, TypedLobby.Default);
+    }
+    public void JoinGame()
+    {
+        if (!connected && gameRoom != null)
+        {
+            PhotonNetwork.JoinRoom(gameRoom.Name);
+        }
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        if (roomList.Count > 0)
+        {
+            gameRoom = roomList[0];
+        }
+        else {
+            gameRoom = null;
+        }
     }
 
     public override void OnCreatedRoom()
@@ -72,6 +97,12 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined room!");
+        connected = true;
+    }
+
+    public override void OnLeftRoom()
+    {
+        connected = false;
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)

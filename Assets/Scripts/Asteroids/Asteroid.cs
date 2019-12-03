@@ -28,15 +28,23 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     //private Vector3 lastPosition;
     //private Quaternion lastRotation;
 
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        
-        // Get the position of the Earth instance and calculate the position vector against it.
-        earthPos = ARController.Instance.earthInstance.transform.position - transform.position;
-        initialEarthPos = earthPos;
 
-        baseScale = transform.localScale;
+        if (photonView.IsMine)
+        {
+            // Get the position of the Earth instance and calculate the position vector against it.
+            earthPos = ARController.Instance.earthInstance.transform.position - transform.position;
+            initialEarthPos = earthPos;
+
+            baseScale = transform.localScale;
+        }
+        else
+        {
+            transform.SetParent(ARController.Instance.earthMarker.transform);
+        }
     }
 
     // Update is called once per frame
@@ -64,13 +72,15 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             stream.SendNext(rb.angularVelocity);
             stream.SendNext(transform.localScale);
 
-            stream.SendNext(rb.position);
+            stream.SendNext(transform.localPosition);
             stream.SendNext(rb.rotation);
         }
         else
         {
             // Sync on the other clients
-            rb.velocity = (Vector3)stream.ReceiveNext();
+            
+            rb.velocity = ARController.Instance.earthMarker.transform.TransformDirection((Vector3)stream.ReceiveNext());
+            //rb.velocity = (Vector3)stream.ReceiveNext();
             rb.angularVelocity = (Vector3)stream.ReceiveNext();
 
             transform.localScale = (Vector3)stream.ReceiveNext();
@@ -80,13 +90,13 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
             //lastPosition = lastPosition + ARController.Instance.earthInstance.transform.position;
 
-            rb.position = (Vector3)stream.ReceiveNext() + ARController.Instance.earthInstance.transform.position;
+            transform.localPosition = (Vector3)stream.ReceiveNext();
             rb.rotation = (Quaternion)stream.ReceiveNext();
 
             // Calculate the time delta (lag) between current server time and when the latest update was sent
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
             // Compensate position
-            rb.position = rb.position + (rb.velocity * lag);
+            transform.localPosition = transform.localPosition + (rb.velocity * lag);
         }
     }
 
