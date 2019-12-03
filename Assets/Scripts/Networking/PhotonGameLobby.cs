@@ -12,6 +12,8 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
 
     private RoomInfo gameRoom = null;
 
+    public bool connected { get; private set; } = false;
+
     public void Awake()
     {
         if (_instance != null && _instance != this)
@@ -70,7 +72,7 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     }
     public void JoinGame()
     {
-        if (gameRoom != null)
+        if (!connected && gameRoom != null)
         {
             PhotonNetwork.JoinRoom(gameRoom.Name);
         }
@@ -95,6 +97,12 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined room!");
+        connected = true;
+    }
+
+    public override void OnLeftRoom()
+    {
+        connected = false;
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)

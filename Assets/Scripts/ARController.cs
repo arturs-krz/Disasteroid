@@ -41,7 +41,6 @@ public class ARController : MonoBehaviour
     private bool isAndroid = true;
 
     private List<AugmentedImage> trackedImages = new List<AugmentedImage>();
-    //public Dictionary<int, Anchor> imageAnchors = new Dictionary<int, Anchor>();
 
     /// <summary>
     /// The Unity Awake() method.
@@ -68,12 +67,8 @@ public class ARController : MonoBehaviour
         isAndroid = Application.platform == RuntimePlatform.Android;
         if (!isAndroid)
         {
-            // If we're not on Android, insantiate earth at origin and disable GameObject
+            // If we're not on Android, insantiate earth at origin.
             earthInstance = Instantiate(earthPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0, 0), Quaternion.identity);
-            earthSync.GetComponent<EarthRotationSync>().FeedEarthInstance(earthInstance);
-
-            //gameObject.SetActive(false);
         }
     }
     /// <summary>
@@ -82,6 +77,15 @@ public class ARController : MonoBehaviour
     public void Update()
     {
         if (!isAndroid) {
+            if (PhotonGameLobby.Instance.connected && earthSync == null)
+            {
+                earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0, 0), Quaternion.identity);
+                earthSync.GetComponent<EarthRotationSync>().FeedEarthInstance(earthInstance);
+
+                // Once we have instantiated everything on the desktop master client,
+                // we can disable the component.
+                gameObject.SetActive(false);
+            }
             return;
         }
 
@@ -90,12 +94,7 @@ public class ARController : MonoBehaviour
         Session.GetTrackables<AugmentedImage>(trackedImages, TrackableQueryFilter.Updated);
 
         foreach (AugmentedImage image in trackedImages)
-        {
-            //Debug.Log(image.DatabaseIndex);
-
-            //Anchor imageAnchor;
-            //imageAnchors.TryGetValue(image.DatabaseIndex, out imageAnchor);
-            
+        {    
             if (image.TrackingState == TrackingState.Tracking && earthInstance == null)
             {
                 Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
@@ -117,7 +116,7 @@ public class ARController : MonoBehaviour
                 // When on mobile, join the game only after we've insantiated the earth
                 // and know the world origin.
                 PhotonGameLobby.Instance.JoinGame();
-                //PhotonNetwork.JoinRoom("DiasteroidMain");
+
             }
             else if (image.TrackingState == TrackingState.Stopped)
             {

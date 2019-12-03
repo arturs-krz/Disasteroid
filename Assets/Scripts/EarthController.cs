@@ -21,8 +21,6 @@ public class EarthController : MonoBehaviour {
         // between clients.
         Vector3 angularVel = rb.transform.up.normalized * speed;
         rb.angularVelocity = angularVel;
-
-
     }
 
     void Update()
