@@ -32,24 +32,28 @@ public class EarthRotationSync : MonoBehaviourPun, IPunObservable
     {
         if (earthInstance != null)
         {
+            // On master client send the earth rotation updates
             if (stream.IsWriting)
             {
                 stream.SendNext(earthRb.rotation);
             }
             else
             {
+                // Sync the rotation on other clients
                 Quaternion lastRotation = (Quaternion)stream.ReceiveNext();
-                float currentTime = Time.time;
-                if (currentTime - lastSync > 1f)
-                {
-                    // float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
-                    // Should compensate for lag here
-                    // Need to somehow calculate the resulting quaternion by adding 
-                    // the angular velocity * lag
+                earthRb.rotation = lastRotation;
+                
+                // float currentTime = Time.time;
+                // if (currentTime - lastSync > 1f)
+                // {
+                //     // float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
+                //     // Should compensate for lag here
+                //     // Need to somehow calculate the resulting quaternion by adding 
+                //     // the angular velocity * lag
 
-                    earthRb.rotation = lastRotation;
-                    lastSync = currentTime;
-                }
+                //     earthRb.rotation = lastRotation;
+                //     lastSync = currentTime;
+                // }
             }
 
         }
