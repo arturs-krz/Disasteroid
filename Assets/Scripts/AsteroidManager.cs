@@ -7,6 +7,7 @@ public class AsteroidManager : MonoBehaviour
 {
 
     public Rigidbody rigidBody;
+    public static float t = 0.02f;
 
     public float force = 0.95f;
     // Start is called before the first frame update
@@ -16,7 +17,7 @@ public class AsteroidManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Vector3 pos = ARController.Instance.earthInstance.transform.position - transform.position;
         this.rigidBody.AddForce(force * pos.normalized / pos.sqrMagnitude);
@@ -34,6 +35,7 @@ public class AsteroidManager : MonoBehaviour
     {
         //Debug.Log(other.gameObject.tag);    
         Destroy(gameObject);
+        Vector2 coordinates = GetImpactCoordinates(other);
         AsteroidSpawner.numberOfAsteroids -= 1;
         GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
         GameControl gameControl = gameController.GetComponent<GameControl>();
@@ -42,18 +44,18 @@ public class AsteroidManager : MonoBehaviour
 
     }
 
-    List<Vector3> ComputePredictedOrbit()
+    List<Vector3> ComputePredictedOrbit(out float time)
     {
         List<Vector3> positions = new List<Vector3>();
         Vector3 earthObjectVector = ARController.Instance.earthInstance.transform.position - transform.position;
         Vector3 acceleration = force * earthObjectVector.normalized / earthObjectVector.sqrMagnitude / rigidBody.mass;
         Vector3 velocity = rigidBody.velocity;
         Vector3 position = transform.position;
-        float t = 0.02f;
         positions.Add(position);
+        time = t;
         while (true)
         {
-            
+            time += t;
             position += velocity * t;
             velocity += acceleration * t;
             earthObjectVector = ARController.Instance.earthInstance.transform.position - position;
@@ -70,4 +72,12 @@ public class AsteroidManager : MonoBehaviour
         }
         return positions;
     }
+    private Vector2 GetImpactCoordinates(Collider other)
+    {
+        Vector3 relativePosition = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position) - other.gameObject.GetComponent<Collider>().transform.position;
+        return new Vector2();
+    }
 }
+
+
+
