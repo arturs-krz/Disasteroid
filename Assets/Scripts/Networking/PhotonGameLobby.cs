@@ -30,7 +30,8 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.IsConnected)
         {
-            PhotonNetwork.PhotonServerSettings.AppSettings.AppVersion = "0.2";
+            //PhotonNetwork.PhotonServerSettings.AppSettings.AppVersion = "0.2";
+            // Set in the settings panel (Window -> Photon Unity Networking -> Highlight Server Settings)
             PhotonNetwork.ConnectUsingSettings();
         }   
     }
@@ -48,7 +49,7 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connected to the master server!");
+        Debug.Log("Connected to the master server! Version: " + PhotonNetwork.PhotonServerSettings.AppSettings.AppVersion);
 
         // Join the room right away only if not on mobile
         if (Application.platform != RuntimePlatform.Android)
