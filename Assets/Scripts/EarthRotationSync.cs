@@ -24,7 +24,7 @@ public class EarthRotationSync : MonoBehaviourPun, IPunObservable
             // On master client send the earth rotation updates
             if (stream.IsWriting)
             {
-                stream.SendNext(earthInstance.transform.localRotation);
+                stream.SendNext(earthInstance.transform.rotation);
             }
             else
             {

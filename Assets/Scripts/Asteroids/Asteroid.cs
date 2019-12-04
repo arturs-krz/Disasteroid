@@ -72,7 +72,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             stream.SendNext(rb.angularVelocity);
             stream.SendNext(transform.localScale);
 
-            stream.SendNext(transform.localPosition);
+            stream.SendNext(transform.position);
             stream.SendNext(rb.rotation);
         }
         else
