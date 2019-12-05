@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+
 public class AsteroidManager : MonoBehaviour
 {
 
@@ -38,10 +39,11 @@ public class AsteroidManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log(other.gameObject.tag);    
+        //Debug.Log(other.gameObject.tag);
+        Vector2 coordinates = GetImpactCoordinates(other, transform.position);
+        Debug.Log(coordinates);
         Destroy(lineRendererObjInstance);
         Destroy(gameObject);
-        Vector2 coordinates = GetImpactCoordinates(other);
         AsteroidSpawner.numberOfAsteroids -= 1;
         GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
         GameControl gameControl = gameController.GetComponent<GameControl>();
@@ -84,10 +86,20 @@ public class AsteroidManager : MonoBehaviour
         lRend.SetPositions(newPos);
         return positions;
     }
-    private Vector2 GetImpactCoordinates(Collider other)
+    private Vector2 GetImpactCoordinates(Collider other,Vector3 position)
     {
-        Vector3 relativePosition = other.ClosestPointOnBounds(transform.position) - other.transform.position;
-        return new Vector2();
+        Quaternion rotation = other.transform.rotation;
+        Vector3 relativePosition = Quaternion.Inverse(rotation) * (other.ClosestPointOnBounds(position) - other.transform.position);
+        relativePosition.Normalize();
+        double x = relativePosition.x;
+        double y = relativePosition.y;
+        double z = relativePosition.z;
+        double latitude = Math.Asin(y)*180/Math.PI;
+        double longitude = Math.Atan2(z, x) * 180 / Math.PI + 107f;
+        if (longitude > 180f) {
+            longitude -= 360f;
+        }
+        return new Vector2((float) latitude,(float) longitude);
     }
 }
 
