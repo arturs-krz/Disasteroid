@@ -5,6 +5,8 @@ using Photon.Pun;
 
 public class Asteroid : MonoBehaviourPun, IPunObservable
 {
+    //Set the visual impact effects
+    private GameObject visualEffect;
 
     private Rigidbody rb;
 
@@ -129,7 +131,22 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine)
         {
-            //Debug.Log(other.gameObject.tag);    
+            NetworkDebugger.Log(other.tag);
+
+            //If asteroid hits water, play waterEffect, else play earthEffect
+            if (other.tag == "Water")
+            {
+                //visualEffect = (GameObject)Instantiate(waterEffect, transform.position, transform.rotation);
+                //visualEffect = PhotonNetwork.Instantiate("BigSplash", transform.position, transform.rotiation);
+                visualEffect = PhotonNetwork.Instantiate("BigSplash", transform.position, transform.rotation);
+            }
+            else
+            {
+                //visualEffect = (GameObject)Instantiate(earthEffect, transform.position, transform.rotation);
+                visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
+            }
+
+            //Debug.Log(other.gameObject.tag); 
             PhotonNetwork.Destroy(gameObject);
 
             AsteroidSpawner.numberOfAsteroids -= 1;

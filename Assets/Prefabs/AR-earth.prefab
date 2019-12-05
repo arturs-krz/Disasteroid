@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6956614122074511816}
   - component: {fileID: 575150255050945208}
   - component: {fileID: 603001599632528338}
+  - component: {fileID: 1626103285184531331}
   m_Layer: 0
   m_Name: Sphere_3
   m_TagString: Untagged
@@ -78,6 +79,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!135 &1626103285184531331
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929984045964259933}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 1.0880754
+  m_Center: {x: 0.014929352, y: 0.003357954, z: 0.1751539}
 --- !u!1 &2395971275789039457
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,9 +103,10 @@ GameObject:
   - component: {fileID: 40866725765592325}
   - component: {fileID: 3770260385540211982}
   - component: {fileID: 5702481215175494705}
+  - component: {fileID: 113008161592995548}
   m_Layer: 0
   m_Name: Continent
-  m_TagString: Untagged
+  m_TagString: Land
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156,6 +171,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!135 &113008161592995548
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2395971275789039457}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.00993318
+  m_Center: {x: 0.000002211891, y: 0.00059329194, z: -0.000011470632}
 --- !u!1 &6271420659220168461
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,9 +195,10 @@ GameObject:
   - component: {fileID: 8630606480811655004}
   - component: {fileID: 3097774559955826731}
   - component: {fileID: 3351039263207017569}
+  - component: {fileID: 251230730778119481}
   m_Layer: 0
   m_Name: water_2
-  m_TagString: Untagged
+  m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -234,6 +263,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!135 &251230730778119481
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6271420659220168461}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.0222692
+  m_Center: {x: 0.005185604, y: 0.0011519191, z: -0.008600415}
 --- !u!1 &8231375159550375567
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,8 +303,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8231375159550375567}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.002, y: 0.002, z: 0.002}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalScale: {x: 0.007, y: 0.007, z: 0.007}
   m_Children:
   - {fileID: 40866725765592325}
   - {fileID: 6956614122074511816}
@@ -307,7 +349,7 @@ SphereCollider:
   m_GameObject: {fileID: 8231375159550375567}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 110
   m_Center: {x: 0, y: 0, z: 0}

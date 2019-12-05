@@ -9,6 +9,10 @@ TagManager:
   - Earth
   - EnvironmentalLight
   - EarthSync
+  - Bullet
+  - Water
+  - Land
+  - Asteroid
   layers:
   - Default
   - TransparentFX
