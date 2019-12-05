@@ -99,6 +99,11 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     {
         Debug.Log("Joined room!");
         connected = true;
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.Instantiate("NetworkDebugger", new Vector3(0,0,0), Quaternion.identity);
+        }
     }
 
     public override void OnLeftRoom()
