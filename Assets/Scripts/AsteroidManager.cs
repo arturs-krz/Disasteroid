@@ -41,7 +41,10 @@ public class AsteroidManager : MonoBehaviour
     {
         //Debug.Log(other.gameObject.tag);
         Vector2 coordinates = GetImpactCoordinates(other, transform.position);
-        Debug.Log(coordinates);
+        int nOfDead = GameObject.FindObjectOfType<DataManager>().Explosion(coordinates);
+        Debug.Log( nOfDead + " people died");
+        DataManager.totalPop -= nOfDead;
+        Debug.Log("Total Population: " + DataManager.totalPop);
         Destroy(lineRendererObjInstance);
         Destroy(gameObject);
         AsteroidSpawner.numberOfAsteroids -= 1;
@@ -72,7 +75,7 @@ public class AsteroidManager : MonoBehaviour
 
             if (positions.Count > 2000)
             {
-                break;
+                return positions;
             }
         }
         lineRendererObjInstance = Instantiate(lineRendererObject);
