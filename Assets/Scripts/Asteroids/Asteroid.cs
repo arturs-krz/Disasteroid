@@ -45,6 +45,13 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
         {
             transform.SetParent(ARController.Instance.earthMarker.transform);
         }
+
+        AsteroidSpawner.Instance.asteroids.Add(gameObject);
+    }
+
+    void OnDestroy()
+    {
+        AsteroidSpawner.Instance.asteroids.Remove(gameObject);
     }
 
     // Update is called once per frame

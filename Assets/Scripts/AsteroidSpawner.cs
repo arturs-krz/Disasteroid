@@ -6,15 +6,34 @@ using Photon.Pun;
 
 public class AsteroidSpawner : MonoBehaviour
 {
+    private static AsteroidSpawner _instance;
+    public static AsteroidSpawner Instance { get { return _instance; } }
+
     public static int numberOfAsteroids;
+
+    public List<GameObject> asteroids;
     
     private bool hasEarthPosition = false;
     private System.Random rd;
+
+    public void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+    }
 
     void Start()
     {
         transform.position = new Vector3(0,0,0);
         numberOfAsteroids = 0;
+        asteroids = new List<GameObject>();
+
         rd = new System.Random();
     }
 
