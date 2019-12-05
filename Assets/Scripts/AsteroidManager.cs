@@ -30,7 +30,10 @@ public class AsteroidManager : MonoBehaviour
             Destroy(gameObject);
             AsteroidSpawner.numberOfAsteroids -= 1;
         }
-        lineRendererObjInstance.GetComponent<LineRenderer>().positionCount -= 1;
+        LineRenderer lr = lineRendererObjInstance.GetComponent<LineRenderer>();
+        if (lr.positionCount > 0) {
+            lr.positionCount -= 1;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
