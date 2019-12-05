@@ -4,53 +4,55 @@ using UnityEngine;
 
 public class BombScript : MonoBehaviour
 {
-    readonly GameObject Bomb;
-    readonly GameObject Asteroid;
-
-    GameObject target;
+    GameObject asteroid;
 
     public GameObject explosionEffect;
     public GameObject propellers;
 
     // speed in which the bomb goes towards the target
-    public float speed = 50f;
-    public float radius = 5f;
+    public float speed = 500f;
+    public float radius = 50f;
     public float force = 500f;
-    public float delay = 3f;
 
+    public float delay = 3f;
     float countdown;
 
     bool startcountdown = false;
     bool hasExploded = false;
-    bool targetFound = true;
     bool targetfound = false;
+
     Vector3 pos = new Vector3(0f, 0f, 0f);
 
     public void Start()
     {
-        //public GameObject bomb = Instantiate(Bomb, transform.position, transform.rotation);
-        //public GameObject asteroid = Instantiate(Asteroid, transform.position, transform.rotation);
-        // should i get this as camera position??
+        NetworkDebugger.Log("starting a new bomb instance_________________________________START");
         pos = Camera.main.gameObject.transform.position;
 
         countdown = delay;
-
         // display on screen "searching"
-        GameObject target = SeekClosest();
+        asteroid = SeekClosest();
     }
 
     void Update()
     {
         if(startcountdown) {
             countdown -= Time.deltaTime;
+            
+            //NetworkDebugger.Log(countdown);
+            if (countdown <= 0f)
+            {
+                NetworkDebugger.Log("ready for the big big boom boom boom boom");
+            }
         }
 
-        if (targetfound)
+        if (targetfound == true)
         {
-            Intercept(target);
+            Intercept(asteroid);
         }
 
-        if (countdown < 0 && !hasExploded)
+
+
+        if (countdown <= 0f && hasExploded == false)
         {
             Explode();
             hasExploded = true;
@@ -62,13 +64,15 @@ public class BombScript : MonoBehaviour
         Vector3 apos = target.transform.position;
         Vector3 direction = apos - pos;
 
-        transform.SetPositionAndRotation(pos + (speed*direction) , transform.rotation);
-        // propellers
-        StartPropellers();
-        if (Vector3.Distance(apos, pos) < 10f) {
-            startcountdown = true;
+        transform.SetPositionAndRotation(pos - (speed*direction) , transform.rotation);
+        //StartPropellers();
+        if (Vector3.Distance(apos, pos) < 1f) {
+            if (startcountdown == false)
+            {
+                NetworkDebugger.Log("target, locked, starting countodwn");
+                startcountdown = true;
+            }
         }
-        
     }
 
     void StartPropellers()
@@ -83,24 +87,26 @@ public class BombScript : MonoBehaviour
         float d = 10000000;
         foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
         {
+            NetworkDebugger.Log("found another target");
             Vector3 apos = nearbyAsteroid.transform.position;
             float d1 = Vector3.Distance(pos, apos);
             if (d1 < d)
             {
                 d = d1;
-                asteroid = nearbyAsteroid;
-                targetfound = true;
+                asteroid = nearbyAsteroid; 
             }
         }
-            return asteroid;
+        targetfound = true;
+
+        NetworkDebugger.Log("decided on a target");
+        return asteroid;
     }
 
     void Explode()
     {
-        //Debug.Log("Boom");
-        // show effect
-        Destroy(propellers);
-         
+        //Destroy(propellers);
+        NetworkDebugger.Log("BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM");
+        
         Instantiate(explosionEffect, transform.position, transform.rotation);
 
         foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
@@ -116,6 +122,5 @@ public class BombScript : MonoBehaviour
         // remove bomb
         Destroy(gameObject);
     }
-
 }
 
