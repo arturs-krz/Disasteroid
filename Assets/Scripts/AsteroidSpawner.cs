@@ -7,10 +7,8 @@ using Photon.Pun;
 public class AsteroidSpawner : MonoBehaviour
 {
     public static int numberOfAsteroids;
-<<<<<<< HEAD
     public List<GameObject> asteroids;
-=======
->>>>>>> origin/master
+
     
     private bool hasEarthPosition = false;
     private System.Random rd;
@@ -57,23 +55,16 @@ public class AsteroidSpawner : MonoBehaviour
 
                 Vector3 earthDirection = (ARController.Instance.earthInstance.transform.position - spawnPosition).normalized;
                 Vector3 velocity = new Vector3(earthDirection.x + GenerateRandomOffset(0.8f), GenerateRandomOffset(0.3f), earthDirection.z + GenerateRandomOffset(0.8f)) * 0.08f;
-
-<<<<<<< HEAD
-            GameObject asteroid = asteroids[rd.Next(asteroids.Count)];
-            GameObject spawnedAsteroid = Instantiate(asteroid, spawnPosition, new Quaternion(x, y, z, w));
-            Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
-            rigidbody.angularVelocity = angularVelocity;
-            rigidbody.velocity = velocity;
-=======
->>>>>>> origin/master
-
-                GameObject spawnedAsteroid = PhotonNetwork.Instantiate("Asteroid", spawnPosition, new Quaternion(x, y, z, w));
+                GameObject asteroid = asteroids[rd.Next(asteroids.Count)];
+                GameObject spawnedAsteroid = Instantiate(asteroid, spawnPosition, new Quaternion(x, y, z, w));
                 Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
                 rigidbody.angularVelocity = angularVelocity;
                 rigidbody.velocity = velocity;
-                
-                Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f));
-                spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
+                AsteroidManager aM = spawnedAsteroid.GetComponent<AsteroidManager>();
+                aM.ComputePredictedOrbit();
+
+                //Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f));
+                //spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
 
                 //float xPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));
                 //float zPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));
