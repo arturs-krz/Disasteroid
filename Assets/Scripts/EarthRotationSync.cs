@@ -1,31 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class EarthRotationSync : MonoBehaviourPun, IPunObservable
 {
     private GameObject earthInstance;
-    private Rigidbody earthRb;
+    //private Rigidbody earthRb;
 
-    private float lastSync = 0f;
+    // private float lastSync = 0f;
 
-    void Update()
+    public void FeedEarthInstance(GameObject earth)
     {
-        if (earthInstance == null)
-        {
-            GameObject earth = GameObject.FindWithTag("Earth");
-            if (earth != null)
-            {
-                FeedEarthInstance(earth);
-                lastSync = 0f;
-            }
-        }
-    }
-    public void FeedEarthInstance(GameObject earthInstance)
-    {
-        this.earthInstance = earthInstance;
-        this.earthRb = this.earthInstance.GetComponent<Rigidbody>();
+       earthInstance = earth;
+       //earthRb = earthInstance.GetComponent<Rigidbody>();
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -35,14 +24,14 @@ public class EarthRotationSync : MonoBehaviourPun, IPunObservable
             // On master client send the earth rotation updates
             if (stream.IsWriting)
             {
-                stream.SendNext(earthRb.rotation);
+                stream.SendNext(earthInstance.transform.rotation);
             }
             else
             {
                 // Sync the rotation on other clients
                 Quaternion lastRotation = (Quaternion)stream.ReceiveNext();
-                earthRb.rotation = lastRotation;
-                
+                earthInstance.transform.localRotation = lastRotation;
+
                 // float currentTime = Time.time;
                 // if (currentTime - lastSync > 1f)
                 // {
