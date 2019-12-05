@@ -181,13 +181,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6271420659220168461}
-  m_LocalRotation: {x: -0.7071068, y: -4.3578823e-33, z: -4.357883e-33, w: 0.7071067}
+  m_LocalRotation: {x: 0.45451945, y: 0.54167527, z: -0.45451945, w: 0.54167527}
   m_LocalPosition: {x: -2.7601077e-16, y: 0, z: -0.31741524}
   m_LocalScale: {x: 110.21678, y: 110.21678, z: 110.21678}
   m_Children: []
   m_Father: {fileID: 4927186208744768668}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 80, y: 90, z: 0}
 --- !u!33 &3097774559955826731
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -243,6 +243,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4927186208744768668}
+  - component: {fileID: 2276131283083766023}
   m_Layer: 0
   m_Name: AR-earth
   m_TagString: Untagged
@@ -267,3 +268,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2276131283083766023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8231375159550375567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d891d12ffa2537429709cadaf2b7063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10
