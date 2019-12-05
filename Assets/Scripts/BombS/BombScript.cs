@@ -26,7 +26,8 @@ public class BombScript : MonoBehaviour
     public void Start()
     {
         NetworkDebugger.Log("starting a new bomb instance_________________________________START");
-        pos = Camera.main.gameObject.transform.position;
+        Vector3 camPos = Camera.main.gameObject.transform.position;
+        pos = Vector3.tras
 
         countdown = delay;
         // display on screen "searching"
@@ -37,11 +38,15 @@ public class BombScript : MonoBehaviour
     {
         if(startcountdown) {
             countdown -= Time.deltaTime;
-            
-            //NetworkDebugger.Log(countdown);
             if (countdown <= 0f)
             {
-                NetworkDebugger.Log("ready for the big big boom boom boom boom");
+
+                if (countdown <= 0f && hasExploded == false)
+                {
+                    NetworkDebugger.Log("Ready to boom boom baby");
+                    Explode();
+                    hasExploded = true;
+                }
             }
         }
 
@@ -49,22 +54,21 @@ public class BombScript : MonoBehaviour
         {
             Intercept(asteroid);
         }
-
-
-
-        if (countdown <= 0f && hasExploded == false)
-        {
-            Explode();
-            hasExploded = true;
-        }
     }
 
     void Intercept(GameObject target)
     {
         Vector3 apos = target.transform.position;
-        Vector3 direction = apos - pos;
 
-        transform.SetPositionAndRotation(pos - (speed*direction) , transform.rotation);
+        //Vector3 direction = apos - pos;
+        //transform.SetPositionAndRotation(pos - (speed*direction) , transform.rotation);
+
+        // check if this works
+        float delta = 1f;
+        Vector3.MoveTowards(pos, apos, delta); 
+
+
+
         //StartPropellers();
         if (Vector3.Distance(apos, pos) < 1f) {
             if (startcountdown == false)
