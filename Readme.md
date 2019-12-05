@@ -12,3 +12,8 @@ and you both run at the same time, you might end up using the same game room and
 
 You can also run the networked version on the desktop. Run the desktop client **first**, before
 opening up the mobile app, so the desktop client acts as the master client.
+
+## Debugging
+
+Over-the-network logging is implemented. Use **NetworkDebugger.Log(msg);** to log from the phone.
+This will be displayed as a regular *Debug.Log* on the master client (computer).
