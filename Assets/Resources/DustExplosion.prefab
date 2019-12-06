@@ -176,7 +176,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.1
+      scalar: 0.01
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4907,7 +4907,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4732810347360860
 Transform:
   m_ObjectHideFlags: 0
@@ -4931,7 +4931,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1129888670383888}
   serializedVersion: 6
   lengthInSec: 2
-  simulationSpeed: 1
+  simulationSpeed: 0.5
   stopAction: 0
   cullingMode: 2
   ringBufferMode: 0
@@ -9661,7 +9661,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1387647844022630}
   serializedVersion: 6
   lengthInSec: 2
-  simulationSpeed: 1
+  simulationSpeed: 0.5
   stopAction: 0
   cullingMode: 2
   ringBufferMode: 0
@@ -9904,8 +9904,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.1
-      minScalar: 0.2
+      scalar: 0.3
+      minScalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -10595,7 +10595,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 3
+        scalar: 1
         minScalar: 0
         maxCurve:
           serializedVersion: 2
@@ -14499,7 +14499,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1440223312230166}
   serializedVersion: 6
   lengthInSec: 2
-  simulationSpeed: 1
+  simulationSpeed: 0.5
   stopAction: 0
   cullingMode: 2
   ringBufferMode: 0
@@ -19286,7 +19286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4812876189455180
 Transform:
   m_ObjectHideFlags: 0
@@ -19310,7 +19310,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1496339999432056}
   serializedVersion: 6
   lengthInSec: 2
-  simulationSpeed: 1
+  simulationSpeed: 0.5
   stopAction: 0
   cullingMode: 2
   ringBufferMode: 0
