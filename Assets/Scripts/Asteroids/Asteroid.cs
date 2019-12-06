@@ -155,7 +155,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             transform.localScale = baseScale * Mathf.Clamp((earthPos.magnitude / initialEarthPos.magnitude) + 0.5f, 0.5f, 1.0f);
         }
 
-        if (pathLineRenderer.positionCount > 0) {
+        if (pathLineRenderer != null && pathLineRenderer.positionCount > 0) {
             pathLineRenderer.positionCount -= 1;
         }
     }
