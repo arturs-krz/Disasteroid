@@ -35,7 +35,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     {
         rb = GetComponent<Rigidbody>();
 
-        if (photonView.IsMine)
+        if (photonView.IsMine) //PhotonNetworking.IsMasterClient
         {
             // Get the position of the Earth instance and calculate the position vector against it.
             earthPos = ARController.Instance.earthInstance.transform.position - transform.position;
@@ -131,30 +131,23 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine)
         {
-            NetworkDebugger.Log(other.tag);
-
             //If asteroid hits water, play waterEffect, else play earthEffect
             if (other.tag == "Water")
             {
-                //visualEffect = (GameObject)Instantiate(waterEffect, transform.position, transform.rotation);
-                //visualEffect = PhotonNetwork.Instantiate("BigSplash", transform.position, transform.rotiation);
                 visualEffect = PhotonNetwork.Instantiate("BigSplash", transform.position, transform.rotation);
             }
             else
             {
-                //visualEffect = (GameObject)Instantiate(earthEffect, transform.position, transform.rotation);
                 visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
             }
 
-            //Debug.Log(other.gameObject.tag); 
             PhotonNetwork.Destroy(gameObject);
 
             AsteroidSpawner.numberOfAsteroids -= 1;
             GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
             GameControl gameControl = gameController.GetComponent<GameControl>();
             gameControl.PD.value -= gameControl.PD.maxValue / 30;
-            gameControl.CO2.value += gameControl.CO2.maxValue / 60;
+            gameControl.CO2.value += gameControl.CO2.maxValue / 60;            
         }
-
     }
 }
