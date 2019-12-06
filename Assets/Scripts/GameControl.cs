@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -13,12 +13,15 @@ public class GameControl : MonoBehaviour
     public Text userDisplay;
     public Text moneyDisplay;
     public GameObject gameover;
-    public GameObject BombPrefab;
 
     //color change for sliders
     public int MaxVal = 100;
     public Color MaxColor;
     public Color MinColor;
+
+
+    private Image populationSliderFill;
+    private Image CO2SliderFill;
 
     // Start is called before the first frame update
     void Start()
