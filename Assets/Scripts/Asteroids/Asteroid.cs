@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
 public class Asteroid : MonoBehaviourPun, IPunObservable
 {
@@ -25,14 +26,22 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     /// </summary>
     private Vector3 initialEarthPos;
 
-    //private Vector3 lastPosition;
-    //private Quaternion lastRotation;
+    public static float t = 0.02f;
 
+    // Line renderer prefab for rendering the asteroid's path
+    public GameObject lineRendererPrefab;
+    private GameObject lineRendererObjInstance = null;
+    private LineRenderer pathLineRenderer;
+
+    public static float force = 0.05f;
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();     
+    }
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-
         if (photonView.IsMine)
         {
             // Get the position of the Earth instance and calculate the position vector against it.
@@ -40,17 +49,32 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             initialEarthPos = earthPos;
 
             baseScale = transform.localScale;
+
+            List<Vector3> pathPositions = ComputePredictedOrbit();
+            if (pathPositions.Count < 2000)
+            {
+                AsteroidSpawner.numberOfAsteroids += 1;
+            }
+            else {
+                PhotonNetwork.Destroy(gameObject);
+            }
         }
         else
         {
             transform.SetParent(ARController.Instance.earthMarker.transform);
-        }
+        }  
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    void OnDestroy()
+    {
+        Destroy(pathLineRenderer);
+        Destroy(lineRendererObjInstance);
     }
 
     /// <summary>
@@ -97,6 +121,16 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
             // Compensate position
             transform.localPosition = transform.localPosition + (rb.velocity * lag);
+
+            if (lineRendererObjInstance == null)
+            {
+                // Compute orbit locally on the first network update
+                ComputePredictedOrbit();
+                pathLineRenderer.useWorldSpace = false;
+                lineRendererObjInstance.transform.SetParent(ARController.Instance.earthMarker.transform);
+                lineRendererObjInstance.transform.localPosition = new Vector3(0,0,0);
+                lineRendererObjInstance.transform.localRotation = Quaternion.identity;
+            }
         }
     }
 
@@ -106,7 +140,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
         if (photonView.IsMine)
         {
             earthPos = ARController.Instance.earthInstance.transform.position - transform.position;
-            rb.AddForce(Time.fixedDeltaTime * 1f * earthPos.normalized / earthPos.sqrMagnitude);
+            rb.AddForce(force * earthPos.normalized / earthPos.sqrMagnitude);
 
             // Destroy if it gets away
             if (earthPos.magnitude > 2.2f)
@@ -118,18 +152,23 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             // Forced perspective. Make it appear slightly smaller if it's close to earth.
             transform.localScale = baseScale * Mathf.Clamp((earthPos.magnitude / initialEarthPos.magnitude) + 0.5f, 0.5f, 1.0f);
         }
-        //else
-        //{
-        //    rb.position = Vector3.MoveTowards(rb.position, lastPosition, Time.fixedDeltaTime * rb.velocity.magnitude);
-        //    rb.rotation = Quaternion.RotateTowards(rb.rotation, lastRotation, Time.fixedDeltaTime * rb.angularVelocity.magnitude);
-        //}
+
+        if (pathLineRenderer.positionCount > 0) {
+            pathLineRenderer.positionCount -= 1;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (photonView.IsMine)
         {
-            //Debug.Log(other.gameObject.tag);    
+            Vector2 coordinates = GetImpactCoordinates(other, transform.position);
+            long nOfDead;
+            float dead_veg;
+
+            GameObject.FindObjectOfType<DataManager>().Explosion(coordinates, out nOfDead, out dead_veg);
+            Debug.Log( nOfDead + " people died, " + "Total Population: " + DataManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + DataManager.totalVeg);
+            
             PhotonNetwork.Destroy(gameObject);
 
             AsteroidSpawner.numberOfAsteroids -= 1;
@@ -138,6 +177,64 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             gameControl.PD.value -= gameControl.PD.maxValue / 30;
             gameControl.CO2.value += gameControl.CO2.maxValue / 60;
         }
+    }
 
+    public List<Vector3> ComputePredictedOrbit()
+    {
+        List<Vector3> positions = new List<Vector3>();
+        
+        Vector3 earthObjectVector = ARController.Instance.earthInstance.transform.position - transform.position;
+        Vector3 acceleration = force * earthObjectVector.normalized / earthObjectVector.sqrMagnitude / rb.mass;
+        Vector3 velocity = rb.velocity;
+        Vector3 position = transform.position;
+
+        positions.Add(position);
+        float time = t;
+
+        Collider earthCollider = ARController.Instance.earthInstance.GetComponent<Collider>();
+        while (earthCollider.ClosestPoint(position) != position)
+        {
+            time += t;
+            position += velocity * t;
+            velocity += acceleration * t;
+            earthObjectVector = ARController.Instance.earthInstance.transform.position - position;
+            acceleration = force * earthObjectVector.normalized / earthObjectVector.sqrMagnitude / rb.mass;
+            positions.Add(position);
+
+            if (positions.Count > 2000)
+            {
+                return positions;
+            }
+        }
+        if (lineRendererObjInstance != null) {
+            Destroy(lineRendererObjInstance);
+        }
+        lineRendererObjInstance = Instantiate(lineRendererPrefab);
+        
+        pathLineRenderer = lineRendererObjInstance.GetComponent<LineRenderer>();
+        pathLineRenderer.positionCount = positions.Count;
+
+        Vector3[] newPos = new Vector3[positions.Count];
+        for (int i = 0; i < positions.Count;i++) {
+            newPos[i] = positions[positions.Count-i-1];
+        }
+        // Set positions of LineRenderer using linePoints array.
+        pathLineRenderer.SetPositions(newPos);
+        return positions;
+    }
+    private Vector2 GetImpactCoordinates(Collider other,Vector3 position)
+    {
+        Quaternion rotation = other.transform.rotation;
+        Vector3 relativePosition = Quaternion.Inverse(rotation) * (other.ClosestPointOnBounds(position) - other.transform.position);
+        relativePosition.Normalize();
+        double x = relativePosition.x;
+        double y = relativePosition.y;
+        double z = relativePosition.z;
+        double latitude = Math.Asin(y)*180/Math.PI;
+        double longitude = Math.Atan2(z, x) * 180 / Math.PI + 107f;
+        if (longitude > 180f) {
+            longitude -= 360f;
+        }
+        return new Vector2((float) latitude,(float) longitude);
     }
 }

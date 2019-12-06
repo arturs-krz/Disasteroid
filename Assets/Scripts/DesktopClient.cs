@@ -18,6 +18,12 @@ public class DesktopClient : MonoBehaviour
             //GameObject ARController = GameObject.Find("Diasteroid AR Controller");
             //ARController.SetActive(false);
         }
+        else
+        {
+            // Otherwise disable the desktop camera
+            GameObject desktopCamera = GameObject.Find("DesktopCamera");
+            desktopCamera.SetActive(false);
+        }
     }
 
     // Update is called once per frame

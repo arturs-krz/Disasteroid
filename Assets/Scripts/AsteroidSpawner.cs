@@ -50,24 +50,17 @@ public class AsteroidSpawner : MonoBehaviour
                 float w = 2 * (float)Math.PI * (float)rd.NextDouble();
 
 
-
                 Vector3 angularVelocity = new Vector3((float)(Math.PI * rd.NextDouble()), (float)(Math.PI * rd.NextDouble()), (float)(Math.PI * rd.NextDouble()));
 
                 Vector3 earthDirection = (ARController.Instance.earthInstance.transform.position - spawnPosition).normalized;
                 Vector3 velocity = new Vector3(earthDirection.x + GenerateRandomOffset(0.8f), GenerateRandomOffset(0.3f), earthDirection.z + GenerateRandomOffset(0.8f)) * 0.08f;
-                GameObject asteroid = asteroids[rd.Next(asteroids.Count)];
-                GameObject spawnedAsteroid = Instantiate(asteroid, spawnPosition, new Quaternion(x, y, z, w));
+                
+                String randomAsteroidPrefabName = asteroids[rd.Next(asteroids.Count)].name;
+                GameObject spawnedAsteroid = PhotonNetwork.Instantiate(randomAsteroidPrefabName, spawnPosition, new Quaternion(x, y, z, w));
+                
                 Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
                 rigidbody.angularVelocity = angularVelocity;
                 rigidbody.velocity = velocity;
-                AsteroidManager aM = spawnedAsteroid.GetComponent<AsteroidManager>();
-                if (aM.ComputePredictedOrbit().Count<2000)
-                {
-                    numberOfAsteroids += 1;
-                }
-                else {
-                    Destroy(spawnedAsteroid);
-                }
 
                 //Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f));
                 //spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);

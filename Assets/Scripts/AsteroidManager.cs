@@ -41,7 +41,7 @@ public class AsteroidManager : MonoBehaviour
     {
         //Debug.Log(other.gameObject.tag);
         Vector2 coordinates = GetImpactCoordinates(other, transform.position);
-        int nOfDead;
+        long nOfDead;
         float dead_veg;
         GameObject.FindObjectOfType<DataManager>().Explosion(coordinates, out nOfDead, out dead_veg);
         Debug.Log( nOfDead + " people died, " + "Total Population: " + DataManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + DataManager.totalVeg);

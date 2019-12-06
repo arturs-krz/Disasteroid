@@ -107,7 +107,7 @@ public class DataManager : MonoBehaviour
 
 
 
-    public long Explosion(float latitude, float longitude, out int number_of_dead, out float dead_vegetation)
+    public long Explosion(float latitude, float longitude, out long number_of_dead, out float dead_vegetation)
     {
         number_of_dead = 0;
         dead_vegetation = 0;
@@ -119,14 +119,14 @@ public class DataManager : MonoBehaviour
                 if (explosionDistance < exterminationRadius) {
                     float density_dead = pop_table[i][j];
                     pop_table[i][j] = 0;
-                    number_of_dead += (int) (density_dead* 12345 * Math.Cos(((double)i - 89.5)*Math.PI/ 180d));
+                    number_of_dead += (long) (density_dead* 12345 * Math.Cos(((double)i - 89.5)*Math.PI/ 180d));
                     dead_vegetation += (float) (veg_table[i][j] * 12345 * Math.Cos(((double)i - 89.5) * Math.PI / 180d));
                     veg_table[i][j] = 0;
                 }
                 else if(explosionDistance < effectRadius){
                     float proportion = (effectRadius - (float) explosionDistance) / (effectRadius - exterminationRadius);
                     float density_dead = proportion*pop_table[i][j];
-                    number_of_dead += (int)(density_dead * 12345 * Math.Cos(((double)i - 89.5) * Math.PI / 180d));
+                    number_of_dead += (long)(density_dead * 12345 * Math.Cos(((double)i - 89.5) * Math.PI / 180d));
                     pop_table[i][j] *= (1 - proportion);
                     dead_vegetation += (float)(veg_table[i][j]*proportion* 12345 * Math.Cos(((double)i - 89.5) * Math.PI / 180d));
                     veg_table[i][j] *= (1 - proportion);
@@ -137,7 +137,7 @@ public class DataManager : MonoBehaviour
         totalVeg -= dead_vegetation;
         return totalPop;
     }
-    public long Explosion(Vector2 v, out int number_of_dead, out float dead_vegetation) {
+    public long Explosion(Vector2 v, out long number_of_dead, out float dead_vegetation) {
         return Explosion(v.x, v.y, out number_of_dead, out dead_vegetation);
     }
 }
