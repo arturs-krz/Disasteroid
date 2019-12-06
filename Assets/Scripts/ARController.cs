@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using GoogleARCore;
 using UnityEngine;
-
+using UnityEngine.UI;
+using Photon.Pun;
 
 #if UNITY_EDITOR
     // Set up touch input propagation while using Instant Preview in the editor.
@@ -12,7 +13,6 @@ using UnityEngine;
 
 public class ARController : MonoBehaviour
 {
-
     private static ARController _instance;
     public static ARController Instance { get { return _instance; } }
 
@@ -25,14 +25,22 @@ public class ARController : MonoBehaviour
     public GameObject earthPrefab;
     public GameObject earthInstance { get; private set; }
 
+    public Transform anchorTransform { get; private set; }
+
+    public GameObject earthMarker { get; private set; }
+
+    private GameObject earthSync;
+    private bool fedLatestInstance = false; // whether latest earth instance is fed to the sync object
+
     /// <summary>
     /// True if the app is in the process of quitting due to an ARCore connection error,
     /// otherwise false.
     /// </summary>
     private bool m_IsQuitting = false;
 
+    private bool isAndroid = true;
+
     private List<AugmentedImage> trackedImages = new List<AugmentedImage>();
-    //public Dictionary<int, Anchor> imageAnchors = new Dictionary<int, Anchor>();
 
     /// <summary>
     /// The Unity Awake() method.
@@ -56,36 +64,75 @@ public class ARController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        isAndroid = Application.platform == RuntimePlatform.Android;
+        if (!isAndroid)
+        {
+            // If we're not on Android, insantiate earth at origin.
+            earthInstance = Instantiate(earthPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        }
     }
     /// <summary>
     /// The Unity Update() method.
     /// </summary>
     public void Update()
     {
+        if (!isAndroid) {
+            if (PhotonGameLobby.Instance.connected && earthSync == null)
+            {
+                earthSync = PhotonNetwork.Instantiate("EarthSyncDummy", new Vector3(0, 0, 0), Quaternion.identity);
+                earthSync.GetComponent<EarthRotationSync>().FeedEarthInstance(earthInstance);
+
+                // Once we have instantiated everything on the desktop master client,
+                // we can disable the component.
+                gameObject.SetActive(false);
+            }
+            return;
+        }
+
         UpdateApplicationLifecycle();
 
         Session.GetTrackables<AugmentedImage>(trackedImages, TrackableQueryFilter.Updated);
 
         foreach (AugmentedImage image in trackedImages)
-        {
-            Debug.Log(image.DatabaseIndex);
-
-            //Anchor imageAnchor;
-            //imageAnchors.TryGetValue(image.DatabaseIndex, out imageAnchor);
-            
+        {    
             if (image.TrackingState == TrackingState.Tracking && earthInstance == null)
             {
                 Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
                 //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
 
                 earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
-                earthInstance.transform.Translate(new Vector3(0, 0.2f, 0), Space.World);
+                earthInstance.transform.Translate(new Vector3(0, 0.3f, 0), Space.World);
+                anchorTransform = imageAnchor.transform;
+
+                earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);
+                earthMarker.transform.position = earthInstance.transform.position;
+
+                GameObject environmentalLight = GameObject.FindWithTag("EnvironmentalLight");
+                environmentalLight.transform.SetParent(earthMarker.transform);
+                environmentalLight.transform.localPosition = new Vector3(0,0,-1);
+
+                fedLatestInstance = false;
+
+                // When on mobile, join the game only after we've insantiated the earth
+                // and know the world origin.
+                PhotonGameLobby.Instance.JoinGame();
+
             }
             else if (image.TrackingState == TrackingState.Stopped)
             {
                 Destroy(earthInstance);
+                Destroy(earthMarker);
             }
+        }
+
+        if (earthSync == null)
+        {
+            earthSync = GameObject.FindWithTag("EarthSync");
+        }
+        else if (earthSync != null && earthInstance != null && !fedLatestInstance)
+        {
+            earthSync.GetComponent<EarthRotationSync>().FeedEarthInstance(earthInstance);
+            fedLatestInstance = true;
         }
     }
 
