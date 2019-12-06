@@ -141,6 +141,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
                 visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
             }
 
+            //Destroy asteroid after impact
             PhotonNetwork.Destroy(gameObject);
 
             AsteroidSpawner.numberOfAsteroids -= 1;
