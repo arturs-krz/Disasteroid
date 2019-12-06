@@ -50,14 +50,16 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
             baseScale = transform.localScale;
 
-            List<Vector3> pathPositions = ComputePredictedOrbit();
-            if (pathPositions.Count < 2000)
-            {
-                AsteroidSpawner.numberOfAsteroids += 1;
-            }
-            else {
-                PhotonNetwork.Destroy(gameObject);
-            }
+            ComputePredictedOrbit();
+
+            //List<Vector3> pathPositions = ComputePredictedOrbit();
+            //if (pathPositions.Count < 2000)
+            //{
+            //    AsteroidSpawner.numberOfAsteroids += 1;
+            //}
+            //else {
+            //    PhotonNetwork.Destroy(gameObject);
+            //}
         }
         else
         {
@@ -125,7 +127,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             if (lineRendererObjInstance == null)
             {
                 // Compute orbit locally on the first network update
-                ComputePredictedOrbit();
+                ComputePredictedOrbitLocal();
                 pathLineRenderer.useWorldSpace = false;
                 lineRendererObjInstance.transform.SetParent(ARController.Instance.earthMarker.transform);
                 lineRendererObjInstance.transform.localPosition = new Vector3(0,0,0);
@@ -222,6 +224,51 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
         pathLineRenderer.SetPositions(newPos);
         return positions;
     }
+
+    public List<Vector3> ComputePredictedOrbitLocal()
+    {
+        List<Vector3> positions = new List<Vector3>();
+
+        Vector3 earthObjectVector = ARController.Instance.earthInstance.transform.position - transform.position;
+        Vector3 acceleration = force * earthObjectVector.normalized / earthObjectVector.sqrMagnitude / rb.mass;
+        Vector3 velocity = rb.velocity;
+
+        Vector3 position = transform.position;
+        Transform parentTransform = transform.parent;
+
+        positions.Add(transform.localPosition);
+        float time = t;
+
+        Collider earthCollider = ARController.Instance.earthInstance.GetComponent<Collider>();
+        while (earthCollider.ClosestPoint(position) != position)
+        {
+            time += t;
+            position += velocity * t;
+            velocity += acceleration * t;
+            earthObjectVector = ARController.Instance.earthInstance.transform.position - position;
+            acceleration = force * earthObjectVector.normalized / earthObjectVector.sqrMagnitude / rb.mass;
+            positions.Add(parentTransform.InverseTransformPoint(position));
+
+            if (positions.Count > 2000)
+            {
+                return positions;
+            }
+        }
+        if (lineRendererObjInstance != null)
+        {
+            Destroy(lineRendererObjInstance);
+        }
+        lineRendererObjInstance = Instantiate(lineRendererPrefab);
+
+        pathLineRenderer = lineRendererObjInstance.GetComponent<LineRenderer>();
+        pathLineRenderer.positionCount = positions.Count;
+
+        // Set positions of LineRenderer using linePoints array.
+        positions.Reverse();
+        pathLineRenderer.SetPositions(positions.ToArray());
+        return positions;
+    }
+
     private Vector2 GetImpactCoordinates(Collider other,Vector3 position)
     {
         Quaternion rotation = other.transform.rotation;

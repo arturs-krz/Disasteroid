@@ -33,7 +33,7 @@ public class AsteroidSpawner : MonoBehaviour
         {
             if (hasEarthPosition && numberOfAsteroids < 3)
             {
-                float distance = 1.4f + 0.6f * (float)rd.NextDouble();
+                float distance = 1.8f + 0.6f * (float)rd.NextDouble();
 
                 //double theta = (Math.PI / 2) * rd.NextDouble() + Math.PI / 4;
                 double phi = Math.PI * 2 * rd.NextDouble();
@@ -55,15 +55,17 @@ public class AsteroidSpawner : MonoBehaviour
                 Vector3 earthDirection = (ARController.Instance.earthInstance.transform.position - spawnPosition).normalized;
                 Vector3 velocity = new Vector3(earthDirection.x + GenerateRandomOffset(0.8f), GenerateRandomOffset(0.3f), earthDirection.z + GenerateRandomOffset(0.8f)) * 0.08f;
                 
-                String randomAsteroidPrefabName = asteroids[rd.Next(asteroids.Count)].name;
+                string randomAsteroidPrefabName = asteroids[rd.Next(asteroids.Count)].name;
                 GameObject spawnedAsteroid = PhotonNetwork.Instantiate(randomAsteroidPrefabName, spawnPosition, new Quaternion(x, y, z, w));
                 
                 Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
                 rigidbody.angularVelocity = angularVelocity;
                 rigidbody.velocity = velocity;
 
-                //Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f));
-                //spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
+                numberOfAsteroids += 1;
+
+                Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * ((float)rd.NextDouble() * 0.5f));
+                spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
 
                 //float xPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));
                 //float zPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));
