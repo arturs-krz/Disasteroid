@@ -10,7 +10,7 @@ public class AsteroidManager : MonoBehaviour
     public Rigidbody rigidBody;
     public static float t = 0.02f;
     public GameObject lineRendererObject;
-    private GameObject lineRendererObjInstance;
+    private GameObject lineRendererObjInstance = null;
     public static float force = 0.05f;
     // Start is called before the first frame update
     void Start()
@@ -41,10 +41,10 @@ public class AsteroidManager : MonoBehaviour
     {
         //Debug.Log(other.gameObject.tag);
         Vector2 coordinates = GetImpactCoordinates(other, transform.position);
-        int nOfDead = GameObject.FindObjectOfType<DataManager>().Explosion(coordinates);
-        Debug.Log( nOfDead + " people died");
-        DataManager.totalPop -= nOfDead;
-        Debug.Log("Total Population: " + DataManager.totalPop);
+        int nOfDead;
+        float dead_veg;
+        GameObject.FindObjectOfType<DataManager>().Explosion(coordinates, out nOfDead, out dead_veg);
+        Debug.Log( nOfDead + " people died, " + "Total Population: " + DataManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + DataManager.totalVeg);
         Destroy(lineRendererObjInstance);
         Destroy(gameObject);
         AsteroidSpawner.numberOfAsteroids -= 1;
@@ -77,6 +77,9 @@ public class AsteroidManager : MonoBehaviour
             {
                 return positions;
             }
+        }
+        if (lineRendererObjInstance != null) {
+            Destroy(lineRendererObjInstance);
         }
         lineRendererObjInstance = Instantiate(lineRendererObject);
         LineRenderer lRend = lineRendererObjInstance.GetComponent<LineRenderer>();
