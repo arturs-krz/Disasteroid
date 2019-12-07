@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +17,12 @@ public class DesktopClient : MonoBehaviour
 
             //GameObject ARController = GameObject.Find("Diasteroid AR Controller");
             //ARController.SetActive(false);
+        }
+        else
+        {
+            // Otherwise disable the desktop camera
+            GameObject desktopCamera = GameObject.Find("DesktopCamera");
+            desktopCamera.SetActive(false);
         }
     }
 
