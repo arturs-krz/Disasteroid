@@ -16,10 +16,6 @@ public class moneyManager : MonoBehaviour
     private float updateMoney;
     public float currentMoney;
 
-    //public PopVegManager popManage;
-
-    
-
     // Start is called before the first frame update
     void Start()
     {
@@ -41,7 +37,6 @@ public class moneyManager : MonoBehaviour
 
         //Call to method to update the money UI 
         MoneyToText(currentMoney, textUI);
-        NetworkDebugger.Log("Money amount is:" + currentMoney);
     }
 
     void MoneyToText(float currentMoney, Text textUI)

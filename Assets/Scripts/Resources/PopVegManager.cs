@@ -91,6 +91,8 @@ public class PopVegManager : MonoBehaviour
         //Set population UI
         popSlider.maxValue = totalPop;
         popSlider.value = totalPop;
+
+        popIncreaseRate = 1;
     }
 
     // Update is called once per frame
@@ -102,8 +104,8 @@ public class PopVegManager : MonoBehaviour
         CO2CriticalValue = CO2Manage.criticalValue;
         CO2Ratio = (CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue;
         
-        popIncreaseRate = 100000;
         totalPop += Convert.ToInt64(popIncreaseRate * CO2Ratio * Time.deltaTime);
+        NetworkDebugger.Log("totalPop is: " + totalPop);
 
         //Update population UI
         popSlider.value = totalPop;

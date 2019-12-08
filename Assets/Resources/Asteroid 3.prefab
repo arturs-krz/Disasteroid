@@ -138,6 +138,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31f8d24c391306940af1cb7e5640af2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ResourceManager: {fileID: 0}
+  CO2Manage: {fileID: 0}
   CO2ImpactValue: 0
   lineRendererPrefab: {fileID: 8452235648329408791, guid: d67d5d45750708b4cb3594196654bbee,
     type: 3}

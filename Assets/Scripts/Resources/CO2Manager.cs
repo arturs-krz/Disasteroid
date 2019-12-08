@@ -12,6 +12,7 @@ public class CO2Manager : MonoBehaviour
     public float maxCO2;
     public float currentCO2;
     public float criticalValue;
+    public float impactValue;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,7 @@ public class CO2Manager : MonoBehaviour
         maxCO2 = 1000;
         currentCO2 = 200;
         criticalValue = Convert.ToSingle(maxCO2 * 0.8);
+        impactValue = 4;
 
         CO2Slider.maxValue = maxCO2;
         CO2Slider.value = currentCO2;

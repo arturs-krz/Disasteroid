@@ -52,7 +52,6 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
         //Set CO2 variables
         ResourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
         CO2Manage = ResourceManager.GetComponent<CO2Manager>();
-        CO2ImpactValue = 80;
 
         if (photonView.IsMine)
         {
@@ -200,20 +199,17 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             long nOfDead;
             float dead_veg;
             GameObject.FindObjectOfType<PopVegManager>().Explosion(coordinates, out nOfDead, out dead_veg);
-            Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
+            //Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
 
             //Increase CO2 value upon impact
-
-            if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2ImpactValue))
+            if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2Manage.impactValue))
             {
-                CO2Manage.currentCO2 += CO2ImpactValue;
+                CO2Manage.currentCO2 += CO2Manage.impactValue;
             }
-
-            NetworkDebugger.Log("The current CO2 level is:" + CO2Manage.currentCO2);
 
             //Destroy asteroid after impact
             PhotonNetwork.Destroy(gameObject);
-            AsteroidSpawner.numberOfAsteroids -= 1;           
+            AsteroidSpawner.numberOfAsteroids -= 1;
         }
     }
 
