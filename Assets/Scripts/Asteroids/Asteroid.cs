@@ -1,13 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using System;
 
 public class Asteroid : MonoBehaviourPun, IPunObservable
 {
     //Set the visual impact effects
     private GameObject visualEffect;
+
+    //Variables for resources
+    public GameObject ResourceManager;
+    public CO2Manager CO2Manage;
+    public float CO2ImpactValue;
 
     private Rigidbody rb;
 
@@ -44,6 +49,11 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
     void Start()
     {
+        //Set CO2 variables
+        ResourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
+        CO2Manage = ResourceManager.GetComponent<CO2Manager>();
+        CO2ImpactValue = 80;
+
         if (photonView.IsMine)
         {
             // Get the position of the Earth instance and calculate the position vector against it.
@@ -185,21 +195,25 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
                 visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
             }
 
-            //Destroy asteroid after impact
+            //Kill people upon impact
             Vector2 coordinates = GetImpactCoordinates(other, transform.position);
             long nOfDead;
             float dead_veg;
+            GameObject.FindObjectOfType<PopVegManager>().Explosion(coordinates, out nOfDead, out dead_veg);
+            Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
 
-            GameObject.FindObjectOfType<DataManager>().Explosion(coordinates, out nOfDead, out dead_veg);
-            Debug.Log( nOfDead + " people died, " + "Total Population: " + DataManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + DataManager.totalVeg);
-            
+            //Increase CO2 value upon impact
+
+            if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2ImpactValue))
+            {
+                CO2Manage.currentCO2 += CO2ImpactValue;
+            }
+
+            NetworkDebugger.Log("The current CO2 level is:" + CO2Manage.currentCO2);
+
+            //Destroy asteroid after impact
             PhotonNetwork.Destroy(gameObject);
-
-            AsteroidSpawner.numberOfAsteroids -= 1;
-            GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
-            GameControl gameControl = gameController.GetComponent<GameControl>();
-            gameControl.PD.value -= gameControl.PD.maxValue / 30;
-            gameControl.CO2.value += gameControl.CO2.maxValue / 60;            
+            AsteroidSpawner.numberOfAsteroids -= 1;           
         }
     }
 

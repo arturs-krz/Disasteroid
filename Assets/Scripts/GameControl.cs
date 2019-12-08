@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameControl : MonoBehaviour
@@ -47,7 +47,6 @@ public class GameControl : MonoBehaviour
 
         populationSliderFill = PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
         CO2SliderFill = CO2.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
-
     }
 
     public void BombAttack()

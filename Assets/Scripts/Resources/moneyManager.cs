@@ -6,21 +6,24 @@ using UnityEngine.UI;
 
 public class moneyManager : MonoBehaviour
 {
-    private int maxPopulation;
-    private int currentPopulation;
+    public Text textUI;
+    
+    private long maxPopulation;
+    private long currentPopulation;
     private float populationRatio;
 
     public int updateRate;
     private float updateMoney;
     public float currentMoney;
 
-    public Text textUI;
+    //public PopVegManager popManage;
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
-        //Set necessary variables
-        maxPopulation = 1; //Reference proper script
+        maxPopulation = PopVegManager.totalPop;
         currentMoney = 10000000000;
         updateRate = 1000000;
 
@@ -31,13 +34,14 @@ public class moneyManager : MonoBehaviour
     void Update()
     {
         //Update currentMoney based on populationRatio and updateRate
-        currentPopulation = 1; //Reference proper script
+        currentPopulation = PopVegManager.totalPop;
         populationRatio = currentPopulation / maxPopulation;
         updateMoney = populationRatio * updateRate * Time.deltaTime;
         currentMoney += updateMoney;
 
         //Call to method to update the money UI 
         MoneyToText(currentMoney, textUI);
+        NetworkDebugger.Log("Money amount is:" + currentMoney);
     }
 
     void MoneyToText(float currentMoney, Text textUI)

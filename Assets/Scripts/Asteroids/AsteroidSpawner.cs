@@ -74,9 +74,7 @@ public class AsteroidSpawner : MonoBehaviour
                 //GameObject spawnedAsteroid = Instantiate(asteroid, spawnPosition, Quaternion.identity);
                 //Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
                 //rigidbody.angularVelocity = angularVelocity;
-                //rigidbody.velocity = velocity;
-
-                
+                //rigidbody.velocity = velocity;              
             }
         }
     }

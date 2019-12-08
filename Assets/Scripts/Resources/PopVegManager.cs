@@ -1,22 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
+using UnityEngine.UI;
 using System;
+using System.IO;
 
-public class DataManager : MonoBehaviour
+public class PopVegManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //Variabels for updating UI
+    public Slider popSlider;
+    
     // Within that radius, there are some injuries.
     public int effectRadius;
+
     // Within that radius, everyone dies.
     public int exterminationRadius;
+
     // pop_table is a tab with dimensions 180 x 360
     // pop_table[i][j] corresponds to the population density of the lattitude i-89.5 and longitude j-179.5
     public static float[][] pop_table;
     public static long totalPop;
     public static float[][] veg_table;
     public static float totalVeg;
+
+    //All necessary CO2 information
+    private CO2Manager CO2Manage;
+    private float CO2CurrentValue;
+    private float CO2Ratio;
+    private float CO2CriticalValue;
+
+    //Rate at which population automatically increases over time
+    public float popIncreaseRate;
+    
+    // Start is called before the first frame update
     void Start()
     {
         using (var reader = new StreamReader(@"Assets/Data/population_data.csv"))
@@ -72,12 +88,25 @@ public class DataManager : MonoBehaviour
         totalVeg = TotalVegetation();
         totalPop = TotalPopulation();
 
+        //Set population UI
+        popSlider.maxValue = totalPop;
+        popSlider.value = totalPop;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Have population increase automatically over time, rate dependent on CO2 levels
+        CO2Manage = GetComponent<CO2Manager>();
+        CO2CurrentValue = CO2Manage.currentCO2;
+        CO2CriticalValue = CO2Manage.criticalValue;
+        CO2Ratio = (CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue;
         
+        popIncreaseRate = 100000;
+        totalPop += Convert.ToInt64(popIncreaseRate * CO2Ratio * Time.deltaTime);
+
+        //Update population UI
+        popSlider.value = totalPop;
     }
 
     public long TotalPopulation() {
@@ -104,8 +133,6 @@ public class DataManager : MonoBehaviour
         }
         return veg;
     }
-
-
 
     public long Explosion(float latitude, float longitude, out long number_of_dead, out float dead_vegetation)
     {
