@@ -14,9 +14,6 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
 
     public bool connected { get; private set; } = false;
 
-    public delegate void JoinEventHandler(bool isMaster);
-    public static event JoinEventHandler OnJoinGame;
-
     public void Awake()
     {
         if (_instance != null && _instance != this)
@@ -106,11 +103,6 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.Instantiate("NetworkDebugger", new Vector3(0,0,0), Quaternion.identity);
-        }
-
-        if (OnJoinGame != null)
-        {
-            OnJoinGame(PhotonNetwork.IsMasterClient);
         }
     }
 

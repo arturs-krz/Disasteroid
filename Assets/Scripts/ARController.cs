@@ -105,7 +105,6 @@ public class ARController : MonoBehaviour
                 anchorTransform = imageAnchor.transform;
 
                 earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);
-                earthMarker.transform.localScale = new Vector3(1f,1f,1f);
                 earthMarker.transform.position = earthInstance.transform.position;
 
                 GameObject environmentalLight = GameObject.FindWithTag("EnvironmentalLight");
