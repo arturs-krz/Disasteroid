@@ -245,8 +245,8 @@ MonoBehaviour:
     m_HighlightedSprite: {fileID: 21300000, guid: 233f676c880ce4b3586426c84ed0fb29,
       type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 233f676c880ce4b3586426c84ed0fb29, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: cf411a18642c9439795eee6d69e39db5, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: cf411a18642c9439795eee6d69e39db5, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 02625910c95ed4ac6a5169c76a5d90f0, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 02625910c95ed4ac6a5169c76a5d90f0, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
