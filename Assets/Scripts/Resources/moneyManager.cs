@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class moneyManager : MonoBehaviour
+public class MoneyManager : MonoBehaviour
 {
     public Text textUI;
     
-    private long maxPopulation;
-    private long currentPopulation;
-    private float populationRatio;
+    public long maxPopulation;
+    public long currentPopulation;
+    public float populationRatio;
 
     public int updateRate;
-    private float updateMoney;
+    public float increaseMoney;
     public float currentMoney;
 
     // Start is called before the first frame update
@@ -29,11 +29,16 @@ public class moneyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //InvokeRepeating("UpdateMoney", 0f, 0.5f);
+    }
+
+    void UpdateMoney()
+    {
         //Update currentMoney based on populationRatio and updateRate
         currentPopulation = PopVegManager.totalPop;
         populationRatio = currentPopulation / maxPopulation;
-        updateMoney = populationRatio * updateRate * Time.deltaTime;
-        currentMoney += updateMoney;
+        increaseMoney = populationRatio * updateRate * Time.deltaTime;
+        currentMoney += increaseMoney;
 
         //Call to method to update the money UI 
         MoneyToText(currentMoney, textUI);

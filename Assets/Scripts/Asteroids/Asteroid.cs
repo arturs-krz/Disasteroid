@@ -202,9 +202,9 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             //Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
 
             //Increase CO2 value upon impact
-            if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2Manage.impactValue))
+            if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2Manage.impactCO2))
             {
-                CO2Manage.currentCO2 += CO2Manage.impactValue;
+                CO2Manage.currentCO2 += CO2Manage.impactCO2;
             }
 
             //Destroy asteroid after impact

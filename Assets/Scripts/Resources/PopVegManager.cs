@@ -23,14 +23,16 @@ public class PopVegManager : MonoBehaviour
     public static float[][] veg_table;
     public static float totalVeg;
 
-    //All necessary CO2 information
-    private CO2Manager CO2Manage;
-    private float CO2CurrentValue;
-    private float CO2Ratio;
-    private float CO2CriticalValue;
+    // All necessary CO2 information
+    public CO2Manager CO2Manage;
+    public float CO2CurrentValue;
+    public float CO2Ratio;
+    public float CO2CriticalValue;
 
-    //Rate at which population automatically increases over time
+    // Rate at which population automatically increases over time
     public float popIncreaseRate;
+
+    // 
     
     // Start is called before the first frame update
     void Start()
@@ -80,7 +82,6 @@ public class PopVegManager : MonoBehaviour
                     {
                         veg_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ","))+0.1f;
                     }
-
                 }
                 k += 1;
             }
@@ -88,27 +89,43 @@ public class PopVegManager : MonoBehaviour
         totalVeg = TotalVegetation();
         totalPop = TotalPopulation();
 
-        //Set population UI
+        // Set population UI
         popSlider.maxValue = totalPop;
         popSlider.value = totalPop;
 
         popIncreaseRate = 1;
+
+        // Set CO2 variables
+        CO2Manage = GetComponent<CO2Manager>();
+        CO2CurrentValue = CO2Manage.currentCO2;
+        CO2CriticalValue = CO2Manage.criticalCO2;
+
+        Debug.Log("At start CO2CurrentValue is: " + CO2CurrentValue);
+        Debug.Log("At start CO2CriticalValue is: " + CO2CriticalValue);
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Have population increase automatically over time, rate dependent on CO2 levels
-        CO2Manage = GetComponent<CO2Manager>();
-        CO2CurrentValue = CO2Manage.currentCO2;
-        CO2CriticalValue = CO2Manage.criticalValue;
-        CO2Ratio = (CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue;
-        
-        totalPop += Convert.ToInt64(popIncreaseRate * CO2Ratio * Time.deltaTime);
-        NetworkDebugger.Log("totalPop is: " + totalPop);
+        if (Time.time > nextActionTime)
+        {
+            nextActionTime += period;
+            // Execute block of code here
 
-        //Update population UI
-        popSlider.value = totalPop;
+            // Have population increase automatically over time, rate dependent on CO2 levels
+            CO2Ratio = (CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue;
+
+            NetworkDebugger.Log("In IncreasePopUdateUI the CO2CurrentValue is: " + CO2CurrentValue);
+            NetworkDebugger.Log("In IncreasePopUdateUI the CO2CriticalValue is: " + CO2CriticalValue);
+            NetworkDebugger.Log("In IncreasePopUdateUI the CO2Ratio is: " + CO2Ratio);
+
+            totalPop += Convert.ToInt64(popIncreaseRate * CO2Ratio * Time.deltaTime);
+            NetworkDebugger.Log("totalPop is: " + totalPop);
+
+            // Update population UI
+            popSlider.value = totalPop;
+        }
+        //InvokeRepeating("IncreasePopUpdateUI", 0f, 0.5f);
     }
 
     public long TotalPopulation() {
