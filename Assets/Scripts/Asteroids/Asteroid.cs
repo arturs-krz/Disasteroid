@@ -81,6 +81,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
     void OnDestroy()
     {
+        PhoneVibration.Vibrate(200);
         Destroy(pathLineRenderer);
         Destroy(lineRendererObjInstance);
     }

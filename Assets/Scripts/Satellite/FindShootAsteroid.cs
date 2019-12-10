@@ -85,7 +85,7 @@ public class FindShootAsteroid : MonoBehaviourPun
         Vector3 direction = target.position - transform.position;
 
         //How to rotate to look in that direction
-        Quaternion lookRotation = Quaternion.LookRotation(transform.InverseTransformDirection(direction), transform.forward);
+        Quaternion lookRotation = Quaternion.LookRotation(transform.InverseTransformDirection(direction), -transform.forward);
 
         //Convert from Quaternion to euler angle
         //Lerp for smooth transitions
@@ -93,7 +93,7 @@ public class FindShootAsteroid : MonoBehaviourPun
         Vector3 rotation = Quaternion.Lerp(partToRotate.localRotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
 
         //Rotate around Z axis only (the gun part is rotated so Z is pointing vertically)
-        partToRotate.localRotation = Quaternion.Euler(0f, 0f, rotation.z);
+        partToRotate.localRotation = Quaternion.Euler(partToRotate.localRotation.eulerAngles.x, 0f, rotation.z);
 
         //Check if it is time to fire. If it is, shoot and reset fireCountDown
         if (fireCountdown <= 0f && ammo > 0) {

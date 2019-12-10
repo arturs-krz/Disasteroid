@@ -52,6 +52,8 @@ public class Laser : MonoBehaviour
             
             //Destroy special effect, bullet and asteroid
             PhotonNetwork.Destroy(target.gameObject);
+            AsteroidSpawner.numberOfAsteroids -= 1;
+
             PhotonNetwork.Destroy(gameObject);
         }
     }

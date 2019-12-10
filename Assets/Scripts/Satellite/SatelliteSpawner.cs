@@ -27,14 +27,14 @@ public class SatelliteSpawner : MonoBehaviourPun
         
     }
 
-    public static void SpawnSatellite(Pose markerPose)
+    public static void SpawnSatellite()
     {
         if (!isSatelliteActive)
         {
             isSatelliteActive = true;
             Transform cameraTransform = ARController.Instance.FirstPersonCamera.transform;
             Vector3 spawnPosition = cameraTransform.position + (cameraTransform.forward * 0.2f);
-            Vector3 spawnOrientation = cameraTransform.right;
+            Vector3 spawnOrientation = (Quaternion.LookRotation(cameraTransform.forward, Vector3.up) * Quaternion.Euler(0, 90f, 0)).eulerAngles;
 
             NetworkDebugger.Log("Requesting satellite spawn");
             Vector3 localPosition = ARController.Instance.earthMarker.transform.InverseTransformPoint(spawnPosition);
