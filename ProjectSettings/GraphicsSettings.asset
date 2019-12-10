@@ -50,7 +50,7 @@ GraphicsSettings:
   m_TierSettings: []
   m_LightmapStripping: 0
   m_FogStripping: 0
-  m_InstancingStripping: 0
+  m_InstancingStripping: 1
   m_LightmapKeepPlain: 1
   m_LightmapKeepDirCombined: 1
   m_LightmapKeepDynamicPlain: 1
@@ -63,3 +63,4 @@ GraphicsSettings:
   m_AlbedoSwatchInfos: []
   m_LightsUseLinearIntensity: 0
   m_LightsUseColorTemperature: 0
+  m_LogWhenShaderIsCompiled: 0

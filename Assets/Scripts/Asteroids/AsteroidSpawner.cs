@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -6,17 +6,34 @@ using Photon.Pun;
 
 public class AsteroidSpawner : MonoBehaviour
 {
-    public static int numberOfAsteroids;
-    public List<GameObject> asteroids;
+    private static AsteroidSpawner _instance;
+    public static AsteroidSpawner Instance { get { return _instance; } }
 
+    public static int numberOfAsteroids;
+
+    public List<GameObject> asteroids;
     
     private bool hasEarthPosition = false;
     private System.Random rd;
+
+    public void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+    }
 
     void Start()
     {
         transform.position = new Vector3(0,0,0);
         numberOfAsteroids = 0;
+        asteroids = new List<GameObject>();
+
         rd = new System.Random();
     }
 
@@ -33,7 +50,7 @@ public class AsteroidSpawner : MonoBehaviour
         {
             if (hasEarthPosition && numberOfAsteroids < 3)
             {
-                float distance = 1.8f + 0.6f * (float)rd.NextDouble();
+                float distance = 1.4f + 0.6f * (float)rd.NextDouble();
 
                 //double theta = (Math.PI / 2) * rd.NextDouble() + Math.PI / 4;
                 double phi = Math.PI * 2 * rd.NextDouble();
@@ -50,21 +67,19 @@ public class AsteroidSpawner : MonoBehaviour
                 float w = 2 * (float)Math.PI * (float)rd.NextDouble();
 
 
+
                 Vector3 angularVelocity = new Vector3((float)(Math.PI * rd.NextDouble()), (float)(Math.PI * rd.NextDouble()), (float)(Math.PI * rd.NextDouble()));
 
                 Vector3 earthDirection = (ARController.Instance.earthInstance.transform.position - spawnPosition).normalized;
                 Vector3 velocity = new Vector3(earthDirection.x + GenerateRandomOffset(0.8f), GenerateRandomOffset(0.3f), earthDirection.z + GenerateRandomOffset(0.8f)) * 0.08f;
-                
-                string randomAsteroidPrefabName = asteroids[rd.Next(asteroids.Count)].name;
-                GameObject spawnedAsteroid = PhotonNetwork.Instantiate(randomAsteroidPrefabName, spawnPosition, new Quaternion(x, y, z, w));
-                
+
+
+                GameObject spawnedAsteroid = PhotonNetwork.Instantiate("Asteroid", spawnPosition, new Quaternion(x, y, z, w));
                 Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
                 rigidbody.angularVelocity = angularVelocity;
                 rigidbody.velocity = velocity;
-
-                numberOfAsteroids += 1;
-
-                Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * ((float)rd.NextDouble() * 0.5f));
+                
+                Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f));
                 spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
 
                 //float xPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));
@@ -76,7 +91,7 @@ public class AsteroidSpawner : MonoBehaviour
                 //rigidbody.angularVelocity = angularVelocity;
                 //rigidbody.velocity = velocity;
 
-                
+                numberOfAsteroids += 1;
             }
         }
     }

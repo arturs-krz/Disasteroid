@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class BombScript : MonoBehaviour
+public class BombScript : MonoBehaviourPun
 {
     GameObject asteroid;
 
@@ -33,6 +34,14 @@ public class BombScript : MonoBehaviour
         countdown = delay;
         // display on screen "searching"
         asteroid = SeekClosest();
+
+        // On all phones
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            Vector3 position = transform.position;
+            transform.SetParent(ARController.Instance.earthMarker.transform);
+            transform.localPosition = position;
+        }
     }
 
     void Update()
@@ -65,8 +74,7 @@ public class BombScript : MonoBehaviour
         //transform.SetPositionAndRotation(pos - (speed*direction) , transform.rotation);
 
         // check if this works
-        float delta = 1f;
-        Vector3.MoveTowards(pos, apos, delta); 
+        Vector3.MoveTowards(pos, apos, speed); 
 
 
 
@@ -90,17 +98,17 @@ public class BombScript : MonoBehaviour
         GameObject asteroid = null;
 
         float d = 10000000;
-        //foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
-        //{
-        //    NetworkDebugger.Log("found another target");
-        //    Vector3 apos = nearbyAsteroid.transform.position;
-        //    float d1 = Vector3.Distance(pos, apos);
-        //    if (d1 < d)
-        //    {
-        //        d = d1;
-        //        asteroid = nearbyAsteroid; 
-        //    }
-        //}
+        foreach (GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
+        {
+            NetworkDebugger.Log("found another target______________________________________________________");
+            Vector3 apos = nearbyAsteroid.transform.position;
+            float d1 = Vector3.Distance(pos, apos);
+            if (d1 < d)
+            {
+                d = d1;
+                asteroid = nearbyAsteroid;
+            }
+        }
         targetfound = true;
 
         NetworkDebugger.Log("decided on a target");
@@ -112,20 +120,26 @@ public class BombScript : MonoBehaviour
         //Destroy(propellers);
         NetworkDebugger.Log("BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM");
         
-        Instantiate(explosionEffect, transform.position, transform.rotation);
+        GameObject explosion = Instantiate(explosionEffect, transform.position, transform.rotation);
 
-        //foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
-        //{
-        //    // add force -> move
-        //    Rigidbody rb = nearbyAsteroid.GetComponent<Rigidbody>();
-        //    if(rb != null)
-        //    {
-        //        rb.AddExplosionForce(force, transform.position, radius);
-        //    }
-        //    // damage
-        //}
+        if (PhotonNetwork.IsMasterClient)
+        {
+            foreach (GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
+            {
+                // add force -> move
+                Rigidbody rb = nearbyAsteroid.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.AddExplosionForce(force, transform.position, radius);
+                }
+                // damage
+            }
+        }
+        
         // remove bomb
+        Destroy(explosion, 2f);
         Destroy(gameObject);
     }
+
 }
 

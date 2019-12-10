@@ -70,7 +70,8 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             // Remove collider to save cpu as it's not needed for phone clients 
             Destroy(GetComponent<Collider>());
                 
-        }  
+        }
+        AsteroidSpawner.Instance.asteroids.Add(gameObject);
     }
 
     // Update is called once per frame
@@ -83,6 +84,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     {
         Destroy(pathLineRenderer);
         Destroy(lineRendererObjInstance);
+        AsteroidSpawner.Instance.asteroids.Remove(gameObject);
     }
 
     /// <summary>
