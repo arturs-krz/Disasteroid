@@ -40,6 +40,8 @@ public class ARController : MonoBehaviour
 
     private bool isAndroid = true;
 
+    private float asteroidTriggerTimer = 0f;
+
     private List<AugmentedImage> trackedImages = new List<AugmentedImage>();
 
     /// <summary>
@@ -95,35 +97,94 @@ public class ARController : MonoBehaviour
 
         foreach (AugmentedImage image in trackedImages)
         {    
-            if (image.TrackingState == TrackingState.Tracking && earthInstance == null)
+            switch (image.Name)
             {
-                Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
-                //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
+                case "Earth":
+                    if (image.TrackingState == TrackingState.Tracking && earthInstance == null)
+                    {
+                        Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
+                        //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
 
-                earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
-                earthInstance.transform.Translate(new Vector3(0, 0.3f, 0), Space.World);
-                anchorTransform = imageAnchor.transform;
+                        earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
+                        earthInstance.transform.Translate(new Vector3(0, 0.3f, 0), Space.World);
+                        anchorTransform = imageAnchor.transform;
 
-                earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);
-                earthMarker.transform.localScale = new Vector3(1f,1f,1f);
-                earthMarker.transform.position = earthInstance.transform.position;
+                        earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);
+                        earthMarker.transform.localScale = new Vector3(1f,1f,1f);
+                        earthMarker.transform.position = earthInstance.transform.position;
 
-                GameObject environmentalLight = GameObject.FindWithTag("EnvironmentalLight");
-                environmentalLight.transform.SetParent(earthMarker.transform);
-                environmentalLight.transform.localPosition = new Vector3(0,0,-1);
+                        GameObject environmentalLight = GameObject.FindWithTag("EnvironmentalLight");
+                        environmentalLight.transform.SetParent(earthMarker.transform);
+                        environmentalLight.transform.localPosition = new Vector3(0,0,-1);
 
-                fedLatestInstance = false;
+                        fedLatestInstance = false;
 
-                // When on mobile, join the game only after we've insantiated the earth
-                // and know the world origin.
-                PhotonGameLobby.Instance.JoinGame();
+                        // When on mobile, join the game only after we've insantiated the earth
+                        // and know the world origin.
+                        PhotonGameLobby.Instance.JoinGame();
 
+                    }
+                    else if (image.TrackingState == TrackingState.Stopped)
+                    {
+                        Destroy(earthInstance);
+                        Destroy(earthMarker);
+                    }
+                    break;
+                case "Satellite":
+                    if (image.TrackingState == TrackingState.Paused)
+                    {
+                        if (asteroidTriggerTimer == 0f)
+                        {
+                            asteroidTriggerTimer = Time.time;
+                        }
+                        else if (Time.time - asteroidTriggerTimer > 2f)
+                        {
+                            NetworkDebugger.Log("LOOKING FOR 2 SECONDS");
+                            asteroidTriggerTimer = Time.time;
+                            SatelliteSpawner.SpawnSatellite(image.CenterPose);
+                        }
+                    }
+
+                    // if (image.TrackingState == TrackingState.Tracking 
+                    //     && image.TrackingMethod == AugmentedImageTrackingMethod.FullTracking
+                    //     // && (image.CenterPose.position - FirstPersonCamera.transform.position).magnitude < 2f
+                    // )
+                    // {
+                    //     NetworkDebugger.Log("TRACKING SATELLITE");
+                    //     //NetworkDebugger.Log(Vector3.Dot(FirstPersonCamera.transform.forward, image.CenterPose.up));
+                    //     // if (asteroidTriggerTimer == 0f)
+                    //     // {
+                    //     //     asteroidTriggerTimer = Time.time;
+                    //     // }
+                    //     // else if (Time.time - asteroidTriggerTimer > 0.5f)
+                    //     // {
+                    //     //     NetworkDebugger.Log("LOOKING FOR 3 SECONDS");
+                    //     //     asteroidTriggerTimer = Time.time;
+                    //     //     PhotonNetwork.Instantiate("AR-Satellite", FirstPersonCamera.transform.position, Quaternion.identity);
+                    //     // }
+                    //     SatelliteSpawner.SpawnSatellite(image.CenterPose);
+                    // }
+                    // else
+                    // {
+                    //     if (image.TrackingState == TrackingState.Paused)
+                    //     {
+                    //         if (asteroidTriggerTimer == 0f)
+                    //         {
+                    //             asteroidTriggerTimer = Time.time;
+                    //         }
+                    //         else if (Time.time - asteroidTriggerTimer > 2f)
+                    //         {
+                    //             NetworkDebugger.Log("LOOKING FOR 3 SECONDS");
+                    //             asteroidTriggerTimer = Time.time;
+                    //             PhotonNetwork.Instantiate("AR-Satellite", FirstPersonCamera.transform.position, Quaternion.identity);
+                    //         }
+                    //     }
+                    //     //NetworkDebugger.Log("LOOKED AWAY");
+                    //     asteroidTriggerTimer = 0f;
+                    // }
+                    break;
             }
-            else if (image.TrackingState == TrackingState.Stopped)
-            {
-                Destroy(earthInstance);
-                Destroy(earthMarker);
-            }
+            
         }
 
         if (earthSync == null)

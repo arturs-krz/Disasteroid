@@ -45,11 +45,14 @@ public class Laser : MonoBehaviour
 
     void HitTarget()
     {
-        //Upon target hit, initiate special effect
-        GameObject visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
-        
-        //Destroy special effect, bullet and asteroid
-        PhotonNetwork.Destroy(target.gameObject);
-        PhotonNetwork.Destroy(gameObject);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            //Upon target hit, initiate special effect
+            GameObject visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
+            
+            //Destroy special effect, bullet and asteroid
+            PhotonNetwork.Destroy(target.gameObject);
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 }

@@ -191,7 +191,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             float dead_veg;
 
             GameObject.FindObjectOfType<DataManager>().Explosion(coordinates, out nOfDead, out dead_veg);
-            Debug.Log( nOfDead + " people died, " + "Total Population: " + DataManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + DataManager.totalVeg);
+            //Debug.Log( nOfDead + " people died, " + "Total Population: " + DataManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + DataManager.totalVeg);
             
             PhotonNetwork.Destroy(gameObject);
 

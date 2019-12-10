@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class FindShootAsteroid : MonoBehaviour
+public class FindShootAsteroid : MonoBehaviourPun
 {
     private Transform target;
 
@@ -25,6 +25,19 @@ public class FindShootAsteroid : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SatelliteSpawner.isSatelliteActive = true;
+
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            Vector3 position = transform.position;
+            Quaternion rotation = transform.rotation;
+
+            transform.SetParent(ARController.Instance.earthMarker.transform);
+            transform.localPosition = position;
+            transform.localRotation = rotation;
+        }
+        Debug.Log("Satellite spawned!");
+
         //Ensure the method of calculating distances to targets is not continuously updated for maintainability reasons, only twice a second
         InvokeRepeating("UpdateTarget", 0f, 0.5f);
     }
@@ -72,15 +85,15 @@ public class FindShootAsteroid : MonoBehaviour
         Vector3 direction = target.position - transform.position;
 
         //How to rotate to look in that direction
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        Quaternion lookRotation = Quaternion.LookRotation(transform.InverseTransformDirection(direction), transform.forward);
 
         //Convert from Quaternion to euler angle
         //Lerp for smooth transitions
         //Vector3 rotation = lookRotation.eulerAngles;
-        Vector3 rotation = Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
+        Vector3 rotation = Quaternion.Lerp(partToRotate.localRotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
 
-        //Rotate around Y axis only
-        partToRotate.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+        //Rotate around Z axis only (the gun part is rotated so Z is pointing vertically)
+        partToRotate.localRotation = Quaternion.Euler(0f, 0f, rotation.z);
 
         //Check if it is time to fire. If it is, shoot and reset fireCountDown
         if (fireCountdown <= 0f && ammo > 0) {
@@ -96,14 +109,17 @@ public class FindShootAsteroid : MonoBehaviour
 
     void Shoot()
     {
-        //When shot is fired, instantiate bullet
-        GameObject LaserGO = PhotonNetwork.Instantiate("Laser", firePoint.position, firePoint.rotation);
-        Laser laser = LaserGO.GetComponent<Laser>();
-
-        //Set target of bullet in bullet script
-        if (laser != null)
+        if (PhotonNetwork.IsMasterClient)
         {
-            laser.Seek(target);
+            //When shot is fired, instantiate bullet
+            GameObject LaserGO = PhotonNetwork.Instantiate("Laser", firePoint.position, firePoint.rotation);
+            Laser laser = LaserGO.GetComponent<Laser>();
+
+            //Set target of bullet in bullet script
+            if (laser != null)
+            {
+                laser.Seek(target);
+            }
         }
     }
 
@@ -113,4 +129,5 @@ public class FindShootAsteroid : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, range);
     }
+
 }
