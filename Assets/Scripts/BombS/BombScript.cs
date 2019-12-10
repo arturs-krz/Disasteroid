@@ -6,6 +6,7 @@ public class BombScript : MonoBehaviour
 {
     GameObject asteroid;
 
+
     public GameObject explosionEffect;
     public GameObject propellers;
 
@@ -27,7 +28,7 @@ public class BombScript : MonoBehaviour
     {
         NetworkDebugger.Log("starting a new bomb instance_________________________________START");
         Vector3 camPos = Camera.main.gameObject.transform.position;
-        pos = Vector3.tras
+        //pos = Vector3.tras;
 
         countdown = delay;
         // display on screen "searching"
@@ -89,17 +90,17 @@ public class BombScript : MonoBehaviour
         GameObject asteroid = null;
 
         float d = 10000000;
-        foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
-        {
-            NetworkDebugger.Log("found another target");
-            Vector3 apos = nearbyAsteroid.transform.position;
-            float d1 = Vector3.Distance(pos, apos);
-            if (d1 < d)
-            {
-                d = d1;
-                asteroid = nearbyAsteroid; 
-            }
-        }
+        //foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
+        //{
+        //    NetworkDebugger.Log("found another target");
+        //    Vector3 apos = nearbyAsteroid.transform.position;
+        //    float d1 = Vector3.Distance(pos, apos);
+        //    if (d1 < d)
+        //    {
+        //        d = d1;
+        //        asteroid = nearbyAsteroid; 
+        //    }
+        //}
         targetfound = true;
 
         NetworkDebugger.Log("decided on a target");
@@ -113,16 +114,16 @@ public class BombScript : MonoBehaviour
         
         Instantiate(explosionEffect, transform.position, transform.rotation);
 
-        foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
-        {
-            // add force -> move
-            Rigidbody rb = nearbyAsteroid.GetComponent<Rigidbody>();
-            if(rb != null)
-            {
-                rb.AddExplosionForce(force, transform.position, radius);
-            }
-            // damage
-        }
+        //foreach(GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
+        //{
+        //    // add force -> move
+        //    Rigidbody rb = nearbyAsteroid.GetComponent<Rigidbody>();
+        //    if(rb != null)
+        //    {
+        //        rb.AddExplosionForce(force, transform.position, radius);
+        //    }
+        //    // damage
+        //}
         // remove bomb
         Destroy(gameObject);
     }
