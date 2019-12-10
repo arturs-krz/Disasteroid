@@ -7,41 +7,63 @@ using UnityEngine.UI;
 public class MoneyManager : MonoBehaviour
 {
     public Text textUI;
-    
+
+    [HideInInspector]
     public long maxPopulation;
+    [HideInInspector]
     public long currentPopulation;
+    [HideInInspector]
     public float populationRatio;
 
+    [HideInInspector]
     public int updateRate;
+    [HideInInspector]
     public float increaseMoney;
+    [HideInInspector]
     public float currentMoney;
+
+    private float nextUpdateTime;
+    private float updateRateTime;
 
     // Start is called before the first frame update
     void Start()
     {
         maxPopulation = PopVegManager.totalPop;
         currentMoney = 10000000000;
-        updateRate = 1000000;
+        updateRate = 1000000000;
 
         MoneyToText(currentMoney, textUI);
+
+        updateRateTime = 0.5f;
+        nextUpdateTime = updateRateTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //InvokeRepeating("UpdateMoney", 0f, 0.5f);
-    }
+        if (Time.time > nextUpdateTime)
+        {
+            //Update currentMoney based on populationRatio and updateRate
+            currentPopulation = PopVegManager.totalPop;
 
-    void UpdateMoney()
-    {
-        //Update currentMoney based on populationRatio and updateRate
-        currentPopulation = PopVegManager.totalPop;
-        populationRatio = currentPopulation / maxPopulation;
-        increaseMoney = populationRatio * updateRate * Time.deltaTime;
-        currentMoney += increaseMoney;
+            NetworkDebugger.Log("maxPopulation is: " + maxPopulation);
+            NetworkDebugger.Log("currentPopulation is: " + currentPopulation);
 
-        //Call to method to update the money UI 
-        MoneyToText(currentMoney, textUI);
+            populationRatio = currentPopulation / maxPopulation;
+
+            NetworkDebugger.Log("PopulationRatio is: " + populationRatio);
+            increaseMoney = populationRatio * updateRate * Time.deltaTime;
+            currentMoney += increaseMoney;
+
+            NetworkDebugger.Log("increaseMoney is: " + increaseMoney);
+            NetworkDebugger.Log("currentMoney is: " + currentMoney);
+
+            //Call to method to update the money UI 
+            MoneyToText(currentMoney, textUI);
+
+            // Set timer
+            nextUpdateTime += updateRateTime;
+        }
     }
 
     void MoneyToText(float currentMoney, Text textUI)

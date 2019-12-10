@@ -6,13 +6,12 @@ using Photon.Pun;
 
 public class Asteroid : MonoBehaviourPun, IPunObservable
 {
-    //Set the visual impact effects
+    // Set the visual impact effects
     private GameObject visualEffect;
 
-    //Variables for resources
+    // Variables for resources
     public GameObject ResourceManager;
     public CO2Manager CO2Manage;
-    public float CO2ImpactValue;
 
     private Rigidbody rb;
 
@@ -49,7 +48,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
     void Start()
     {
-        //Set CO2 variables
+        // Set CO2 variables
         ResourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
         CO2Manage = ResourceManager.GetComponent<CO2Manager>();
 
@@ -77,8 +76,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             transform.SetParent(ARController.Instance.earthMarker.transform);
 
             // Remove collider to save cpu as it's not needed for phone clients 
-            Destroy(GetComponent<Collider>());
-                
+            Destroy(GetComponent<Collider>());      
         }  
     }
 
@@ -121,15 +119,15 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             // Sync on the other clients
             
             rb.velocity = ARController.Instance.earthMarker.transform.TransformDirection((Vector3)stream.ReceiveNext());
-            //rb.velocity = (Vector3)stream.ReceiveNext();
+            // rb.velocity = (Vector3)stream.ReceiveNext();
             rb.angularVelocity = (Vector3)stream.ReceiveNext();
 
             transform.localScale = (Vector3)stream.ReceiveNext();
 
-            //lastPosition = (Vector3)stream.ReceiveNext();
-            //lastRotation = (Quaternion)stream.ReceiveNext();
+            // lastPosition = (Vector3)stream.ReceiveNext();
+            // lastRotation = (Quaternion)stream.ReceiveNext();
 
-            //lastPosition = lastPosition + ARController.Instance.earthInstance.transform.position;
+            // lastPosition = lastPosition + ARController.Instance.earthInstance.transform.position;
 
             transform.localPosition = (Vector3)stream.ReceiveNext();
             rb.rotation = (Quaternion)stream.ReceiveNext();
@@ -179,7 +177,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine)
         {
-            //If asteroid hits water, play waterEffect, else play earthEffect
+            // If asteroid hits water, play waterEffect, else play earthEffect
             if (other.tag == "Water")
             {
                 Vector3 collisionNormal = (transform.position - ARController.Instance.earthInstance.transform.position).normalized;
@@ -194,20 +192,20 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
                 visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
             }
 
-            //Kill people upon impact
+            // Kill people upon impact
             Vector2 coordinates = GetImpactCoordinates(other, transform.position);
             long nOfDead;
             float dead_veg;
             GameObject.FindObjectOfType<PopVegManager>().Explosion(coordinates, out nOfDead, out dead_veg);
             //Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
 
-            //Increase CO2 value upon impact
+            // Increase CO2 value upon impact
             if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2Manage.impactCO2))
             {
                 CO2Manage.currentCO2 += CO2Manage.impactCO2;
             }
 
-            //Destroy asteroid after impact
+            // Destroy asteroid after impact
             PhotonNetwork.Destroy(gameObject);
             AsteroidSpawner.numberOfAsteroids -= 1;
         }

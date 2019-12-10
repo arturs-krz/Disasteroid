@@ -16,6 +16,7 @@ public class PopVegManager : MonoBehaviour
     // Within that radius, everyone dies.
     public int exterminationRadius;
 
+    [HideInInspector]
     // pop_table is a tab with dimensions 180 x 360
     // pop_table[i][j] corresponds to the population density of the lattitude i-89.5 and longitude j-179.5
     public static float[][] pop_table;
@@ -24,23 +25,26 @@ public class PopVegManager : MonoBehaviour
     public static float totalVeg;
 
     // All necessary CO2 information
-    public CO2Manager CO2Manage;
-    public float CO2CurrentValue;
-    public float CO2Ratio;
-    public float CO2CriticalValue;
+    private CO2Manager CO2Manage;
+    private float CO2CurrentValue;
+    private float CO2Ratio;
+    private float CO2CriticalValue;
 
     // Rate at which population automatically increases over time
-    public float popIncreaseRate;
+    private float popIncreaseRate;
+    private float increasePop;
 
-    // 
-    
+    // Rate at which UI is updated
+    private float nextUpdateTime;
+    private float updateRate;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         using (var reader = new StreamReader(@"Assets/Data/population_data.csv"))
         {
             pop_table = new float[180][];
-            
+
             var line = reader.ReadLine();
             int k = 0;
             while (!reader.EndOfStream)
@@ -51,12 +55,12 @@ public class PopVegManager : MonoBehaviour
                 for (int i = 1; i < 361; i++) {
                     if (values[i] == "99999.0")
                     {
-                        pop_table[179-k][i - 1] = 0;
+                        pop_table[179 - k][i - 1] = 0;
                     }
                     else {
-                        pop_table[179-k][i - 1] = float.Parse(values[i].Replace(".",","));
+                        pop_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ","));
                     }
-                    
+
                 }
                 k += 1;
             }
@@ -80,7 +84,7 @@ public class PopVegManager : MonoBehaviour
                     }
                     else
                     {
-                        veg_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ","))+0.1f;
+                        veg_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ",")) + 0.1f;
                     }
                 }
                 k += 1;
@@ -88,44 +92,41 @@ public class PopVegManager : MonoBehaviour
         }
         totalVeg = TotalVegetation();
         totalPop = TotalPopulation();
+    }
 
+    void Start() { 
         // Set population UI
         popSlider.maxValue = totalPop;
         popSlider.value = totalPop;
 
-        popIncreaseRate = 1;
+        popIncreaseRate = 5000;
 
         // Set CO2 variables
         CO2Manage = GetComponent<CO2Manager>();
         CO2CurrentValue = CO2Manage.currentCO2;
         CO2CriticalValue = CO2Manage.criticalCO2;
 
-        Debug.Log("At start CO2CurrentValue is: " + CO2CurrentValue);
-        Debug.Log("At start CO2CriticalValue is: " + CO2CriticalValue);
+        // Set timer variables
+        updateRate = 0.5f;
+        nextUpdateTime = updateRate;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Time.time > nextActionTime)
+        if (Time.time > nextUpdateTime)
         {
-            nextActionTime += period;
-            // Execute block of code here
-
             // Have population increase automatically over time, rate dependent on CO2 levels
             CO2Ratio = (CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue;
-
-            NetworkDebugger.Log("In IncreasePopUdateUI the CO2CurrentValue is: " + CO2CurrentValue);
-            NetworkDebugger.Log("In IncreasePopUdateUI the CO2CriticalValue is: " + CO2CriticalValue);
-            NetworkDebugger.Log("In IncreasePopUdateUI the CO2Ratio is: " + CO2Ratio);
-
-            totalPop += Convert.ToInt64(popIncreaseRate * CO2Ratio * Time.deltaTime);
-            NetworkDebugger.Log("totalPop is: " + totalPop);
+            increasePop = popIncreaseRate * CO2Ratio * Time.deltaTime;
+            totalPop += Convert.ToInt64(increasePop);
 
             // Update population UI
             popSlider.value = totalPop;
+            
+            // Set timer
+            nextUpdateTime += updateRate;
         }
-        //InvokeRepeating("IncreasePopUpdateUI", 0f, 0.5f);
     }
 
     public long TotalPopulation() {
