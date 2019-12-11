@@ -12,9 +12,11 @@ public class BombScript : MonoBehaviourPun
     public GameObject propellers;
 
     // speed in which the bomb goes towards the target
-    public float speed = 500f;
+    public float speed = 5f;
     public float radius = 50f;
     public float force = 500f;
+
+    private int bombCost;
 
     public float delay = 3f;
     float countdown;
@@ -23,13 +25,19 @@ public class BombScript : MonoBehaviourPun
     bool hasExploded = false;
     bool targetfound = false;
 
-    Vector3 pos = new Vector3(0f, 0f, 0f);
+    Vector3 position = new Vector3(0f, 0f, 0f);
+    Vector3 aposition = new Vector3(0f, 0f, 0f);
 
     public void Start()
     {
-        NetworkDebugger.Log("starting a new bomb instance_________________________________START");
         Vector3 camPos = Camera.main.gameObject.transform.position;
-        //pos = Vector3.tras;
+
+        bombCost = 50000000;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("buyStuff", RpcTarget.All, bombCost);
+        }
 
         countdown = delay;
         // display on screen "searching"
@@ -38,9 +46,10 @@ public class BombScript : MonoBehaviourPun
         // On all phones
         if (!PhotonNetwork.IsMasterClient)
         {
-            Vector3 position = transform.position;
+            Vector3 localPosition = transform.position;
             transform.SetParent(ARController.Instance.earthMarker.transform);
-            transform.localPosition = position;
+            transform.localPosition = localPosition;
+            position = transform.position;
         }
     }
 
@@ -62,47 +71,37 @@ public class BombScript : MonoBehaviourPun
 
         if (targetfound == true)
         {
-            Intercept(asteroid);
-        }
-    }
+            aposition = asteroid.transform.position;
+            gameObject.transform.position = Vector3.MoveTowards(position, aposition, speed * Time.deltaTime);
+            position = gameObject.transform.position;
 
-    void Intercept(GameObject target)
-    {
-        Vector3 apos = target.transform.position;
+            gameObject.transform.LookAt(aposition);
+            
+            NetworkDebugger.Log("ast_pos: " + aposition + " // rocket_pos: " + position);
 
-        //Vector3 direction = apos - pos;
-        //transform.SetPositionAndRotation(pos - (speed*direction) , transform.rotation);
-
-        // check if this works
-        Vector3.MoveTowards(pos, apos, speed); 
-
-
-
-        //StartPropellers();
-        if (Vector3.Distance(apos, pos) < 1f) {
-            if (startcountdown == false)
+            //StartPropellers();
+            if (Vector3.Distance(aposition, position) < 1f || asteroid == null)
             {
-                NetworkDebugger.Log("target, locked, starting countodwn");
-                startcountdown = true;
+                if (startcountdown == false)
+                {
+                    startcountdown = true;
+                }
             }
         }
     }
 
-    void StartPropellers()
-    {
-        Instantiate(propellers, transform.position, transform.rotation);
-    }
+    //void StartPropellers()
+    //{
+    //    Instantiate(propellers, transform.position, transform.rotation);
+    //}
 
     GameObject SeekClosest()
     {
-        GameObject asteroid = null;
-
         float d = 10000000;
         foreach (GameObject nearbyAsteroid in AsteroidSpawner.Instance.asteroids)
         {
-            NetworkDebugger.Log("found another target______________________________________________________");
-            Vector3 apos = nearbyAsteroid.transform.position;
-            float d1 = Vector3.Distance(pos, apos);
+            aposition = nearbyAsteroid.transform.position;
+            float d1 = Vector3.Distance(position, aposition);
             if (d1 < d)
             {
                 d = d1;
@@ -110,8 +109,6 @@ public class BombScript : MonoBehaviourPun
             }
         }
         targetfound = true;
-
-        NetworkDebugger.Log("decided on a target");
         return asteroid;
     }
 
@@ -139,7 +136,15 @@ public class BombScript : MonoBehaviourPun
         // remove bomb
         // FOR NOW, ONLY LOCALLY
         Destroy(explosion, 2f);
-        Destroy(gameObject);
+        PhotonNetwork.Destroy(gameObject);
+    }
+
+    [PunRPC]
+    void buyStuff(int costs)
+    {
+        // GameObject resourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
+        // MoneyManager moneyManage = resourceManager.GetComponent<MoneyManager>();
+        // moneyManage.currentMoney -= costs;
     }
 
 }
