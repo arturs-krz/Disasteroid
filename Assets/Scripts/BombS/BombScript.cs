@@ -137,6 +137,7 @@ public class BombScript : MonoBehaviourPun
         }
         
         // remove bomb
+        // FOR NOW, ONLY LOCALLY
         Destroy(explosion, 2f);
         Destroy(gameObject);
     }
