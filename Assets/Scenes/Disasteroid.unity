@@ -343,7 +343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FirstPersonCamera: {fileID: 1627278109}
-  satelliteSpawnTime: 2
+  satelliteSpawnTime: 3
   GameUIContainer: {fileID: 40919614}
   UIFramesContainer: {fileID: 1911038361}
   earthPrefab: {fileID: 8231375159550375567, guid: 84d8ff045b5ebef4a8b77de79d9debd8,

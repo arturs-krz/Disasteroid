@@ -55,6 +55,8 @@ public class ARController : MonoBehaviour
     private bool satelliteTriggerActive = false;
     private float satelliteLastSeenTimer = 0f;
 
+    private Vector3 lastObservationPosition = new Vector3(0,0,0);
+
     private List<AugmentedImage> trackedImages = new List<AugmentedImage>();
 
     /// <summary>
@@ -120,6 +122,7 @@ public class ARController : MonoBehaviour
         satelliteLastSeenTimer += Time.deltaTime;
         bool satelliteTriggerStarted = false;
 
+
         foreach (AugmentedImage image in trackedImages)
         {
             switch (image.Name)
@@ -170,6 +173,8 @@ public class ARController : MonoBehaviour
                     if (!SatelliteSpawner.isSatelliteActive && (image.TrackingState == TrackingState.Paused || image.TrackingState == TrackingState.Tracking))
                     {
                         satelliteLastSeenTimer = 0f;
+                        lastObservationPosition = FirstPersonCamera.transform.position;
+                        
                         if (satelliteTriggerActive == false && earthMarker != null)
                         {
                             if ((earthMarker.transform.position - FirstPersonCamera.transform.position).magnitude < 1f)
@@ -191,7 +196,9 @@ public class ARController : MonoBehaviour
 
             if (satelliteTriggerActive && !satelliteTriggerStarted)
             {
-                if (satelliteLastSeenTimer > 1f)
+                // NetworkDebugger.Log((FirstPersonCamera.transform.position - lastObservationPosition).magnitude);
+                if ((FirstPersonCamera.transform.position - lastObservationPosition).magnitude > 0.2f)
+                // if (satelliteLastSeenTimer > 1.4f)
                 {
                     satelliteTriggerActive = false;
                     satelliteFinderFrame.SetActive(false);

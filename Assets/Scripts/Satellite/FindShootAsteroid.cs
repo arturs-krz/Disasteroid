@@ -12,7 +12,7 @@ public class FindShootAsteroid : MonoBehaviourPun
     public float range = 15f;
     public float fireRate = 1f;
     private float fireCountdown = 0f;
-    public float turnSpeed = 10f;
+    public float turnSpeed = 2f;
     public int ammo = 10;
 
     [Header("Unity Setup Fields")]
@@ -85,12 +85,12 @@ public class FindShootAsteroid : MonoBehaviourPun
         Vector3 direction = target.position - transform.position;
 
         //How to rotate to look in that direction
-        Quaternion lookRotation = Quaternion.LookRotation(transform.InverseTransformDirection(direction), -transform.forward);
+        Quaternion lookRotation = Quaternion.LookRotation(transform.InverseTransformDirection(direction));
 
         //Convert from Quaternion to euler angle
         //Lerp for smooth transitions
         //Vector3 rotation = lookRotation.eulerAngles;
-        Vector3 rotation = Quaternion.Lerp(partToRotate.localRotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
+        Vector3 rotation = partToRotate.InverseTransformDirection(Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles);
 
         //Rotate around Z axis only (the gun part is rotated so Z is pointing vertically)
         partToRotate.localRotation = Quaternion.Euler(partToRotate.localRotation.eulerAngles.x, 0f, rotation.z);
