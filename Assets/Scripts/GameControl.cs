@@ -52,12 +52,15 @@ public class GameControl : MonoBehaviour
 
     public void BombAttack()
     {
-        BombNum -= 1;
-        bombDisplay.text = BombNum.ToString();
-        PD.value -= PD.maxValue / 20;
-        CO2.value += MaxVal / 10;
-        moneyValue = (int)(moneyValue + PD.value * 10e6  - bombPrice);
-        moneyDisplay.text = "$ " + moneyValue.ToString("n0");
+        if (BombNum > 0)
+        {
+            BombNum -= 1;
+            PD.value -= PD.maxValue / 20;
+            CO2.value += MaxVal / 10;
+            bombDisplay.text = BombNum.ToString();
+            moneyValue = (int)(moneyValue + PD.value * 10e6 - bombPrice);
+            moneyDisplay.text = "$ " + moneyValue.ToString("n0");
+        }
     }
 
     public void SatelitteScan()
