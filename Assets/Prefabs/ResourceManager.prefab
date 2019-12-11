@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 7264182984082148786}
   - component: {fileID: 7264182984082148789}
   - component: {fileID: 7264182984082148784}
+  - component: {fileID: 2823547660546110796}
+  - component: {fileID: 1289957931726273788}
   m_Layer: 0
   m_Name: ResourceManager
   m_TagString: ResourceManager
@@ -45,8 +47,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10f5cadeb15ac934b899de82f4e4cf7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textUI: {fileID: 0}
+  textUI: {fileID: 5686606858309250313, guid: af1e3bac979150d40a2e15d511a8fdd4, type: 3}
+  maxPopulation: 0
+  currentPopulation: 0
+  populationRatio: 0
   updateRate: 0
+  increaseMoney: 0
   currentMoney: 0
 --- !u!114 &7264182984082148789
 MonoBehaviour:
@@ -60,10 +66,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5076aa25eae2bc848a76f62444a0c524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CO2Slider: {fileID: 0}
+  CO2Slider: {fileID: 931681681831636479, guid: 6e75b299016fc444a86f630f1ca78737,
+    type: 3}
   maxCO2: 0
   currentCO2: 0
-  criticalValue: 0
+  criticalCO2: 0
+  impactCO2: 0
 --- !u!114 &7264182984082148784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,7 +84,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaabfa99139177e41ad1b623f38a5f35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popSlider: {fileID: 0}
+  popSlider: {fileID: 798302170259624071, guid: 79144e3f7d5e8da409fd1cb6a1724ff0,
+    type: 3}
   effectRadius: 5
   exterminationRadius: 3
-  popIncreaseRate: 0
+--- !u!114 &2823547660546110796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7264182984082148788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &1289957931726273788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7264182984082148788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667994ed9c3c5e54ea4ef2f3b1ffa10c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  popSlider: {fileID: 798302170259624071, guid: 79144e3f7d5e8da409fd1cb6a1724ff0,
+    type: 3}

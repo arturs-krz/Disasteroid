@@ -197,7 +197,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             long nOfDead;
             float dead_veg;
             GameObject.FindObjectOfType<PopVegManager>().Explosion(coordinates, out nOfDead, out dead_veg);
-            //Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
+            Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
 
             // Increase CO2 value upon impact
             if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2Manage.impactCO2))

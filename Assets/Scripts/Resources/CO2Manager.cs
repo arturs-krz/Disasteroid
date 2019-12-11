@@ -24,8 +24,8 @@ public class CO2Manager : MonoBehaviour
     {
         maxCO2 = 100;
         currentCO2 = 20;
-        criticalCO2 = Convert.ToSingle(maxCO2 * 0.8);
-        impactCO2 = 2;   
+        criticalCO2 = Convert.ToSingle(maxCO2 * 0.6);
+        impactCO2 = 2f;   
     }
     
     // Start is called before the first frame update

@@ -22,13 +22,16 @@ public class MoneyManager : MonoBehaviour
     [HideInInspector]
     public float currentMoney;
 
+    float currentPopulationInt;
+    float maxPopulationInt;
+
     private float nextUpdateTime;
     private float updateRateTime;
 
     // Start is called before the first frame update
     void Start()
     {
-        maxPopulation = PopVegManager.totalPop;
+        maxPopulation = 6167860246/10000000;
         currentMoney = 10000000000;
         updateRate = 1000000000;
 
@@ -44,19 +47,25 @@ public class MoneyManager : MonoBehaviour
         if (Time.time > nextUpdateTime)
         {
             //Update currentMoney based on populationRatio and updateRate
-            currentPopulation = PopVegManager.totalPop;
+            currentPopulation = PopVegManager.totalPop/10000000;
 
-            NetworkDebugger.Log("maxPopulation is: " + maxPopulation);
-            NetworkDebugger.Log("currentPopulation is: " + currentPopulation);
+            currentPopulationInt = 1;
 
-            populationRatio = currentPopulation / maxPopulation;
+            //NetworkDebugger.Log("currentPopulation as int is: " + currentPopulationInt);
 
-            NetworkDebugger.Log("PopulationRatio is: " + populationRatio);
+            maxPopulationInt = 2;
+
+            //NetworkDebugger.Log("maxPopulation as int is: " + maxPopulationInt);
+            
+            populationRatio = currentPopulationInt / maxPopulationInt;
+
+            //NetworkDebugger.Log("PopulationRatio is: " + populationRatio);
+
             increaseMoney = populationRatio * updateRate * Time.deltaTime;
             currentMoney += increaseMoney;
 
-            NetworkDebugger.Log("increaseMoney is: " + increaseMoney);
-            NetworkDebugger.Log("currentMoney is: " + currentMoney);
+            //NetworkDebugger.Log("increaseMoney is: " + increaseMoney);
+            //NetworkDebugger.Log("currentMoney is: " + currentMoney);
 
             //Call to method to update the money UI 
             MoneyToText(currentMoney, textUI);

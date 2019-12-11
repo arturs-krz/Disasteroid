@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class SynchronizeResources : MonoBehaviour
 {
-    [HideInInspector]
+    public Slider popSlider;
+
     private float nextUpdateTime;
     private float updateRate;
 
@@ -15,16 +17,18 @@ public class SynchronizeResources : MonoBehaviour
 
     private CO2Manager CO2Manage;
     private MoneyManager MoneyManage;
+    private PopVegManager popVegManager;
 
     PhotonView photonView;
 
     void Start()
     {
-        updateRate = 2.0f;
+        updateRate = 0.5f;
         nextUpdateTime = updateRate;
 
         CO2Manage = GetComponent<CO2Manager>();
         MoneyManage = GetComponent<MoneyManager>();
+        popVegManager = GetComponent<PopVegManager>();
 
         photonView = PhotonView.Get(this);
     }
@@ -51,6 +55,7 @@ public class SynchronizeResources : MonoBehaviour
     [PunRPC]
     void Synchronize(float CO2, float Money, long Population)
     {
+        NetworkDebugger.Log("Getting resources from server");
         CO2Manager CO2ManageSynch = GetComponent<CO2Manager>();
         MoneyManager MoneyManageSynch = GetComponent<MoneyManager>();
 
@@ -58,11 +63,16 @@ public class SynchronizeResources : MonoBehaviour
         MoneyManageSynch.currentMoney = Money;
         PopVegManager.totalPop = Population;
 
-        NetworkDebugger.Log("CO2 value on other device: " + CO2);
-        NetworkDebugger.Log("CO2 value on other device: " + CO2ManageSynch.currentCO2);
-        NetworkDebugger.Log("Money value on other device: " + Money);
-        NetworkDebugger.Log("Money value on other device: " + MoneyManageSynch.currentMoney);
-        NetworkDebugger.Log("Population value on other device: " + Population);
-        NetworkDebugger.Log("Population value on other device: " + PopVegManager.totalPop);
+        //NetworkDebugger.Log("CO2 value on other device: " + CO2);
+        //NetworkDebugger.Log("CO2 value on other device: " + CO2ManageSynch.currentCO2);
+        //NetworkDebugger.Log("Money value on other device: " + Money);
+        //NetworkDebugger.Log("Money value on other device: " + MoneyManageSynch.currentMoney);
+        //NetworkDebugger.Log("Population value on other device: " + Population);
+        //NetworkDebugger.Log("Population PopVegManager value on other device: " + PopVegManager.totalPop);
+
+        //NetworkDebugger.Log("Population UI value on other device: " + popSlider.value);
+        //NetworkDebugger.Log("Population UI maxValue on other device: " + popSlider.maxValue);
+
+
     }
 }

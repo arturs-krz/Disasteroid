@@ -120,46 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &54643785 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7264182984082148788, guid: fd7d1bd002d4cee4689db6a0028745c8,
-    type: 3}
-  m_PrefabInstance: {fileID: 7264182984731560782}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &54643786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54643785}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 0
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
-  viewIdField: 1
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
---- !u!114 &54643790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54643785}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 667994ed9c3c5e54ea4ef2f3b1ffa10c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &115151924
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,5 +1032,20 @@ PrefabInstance:
       propertyPath: popSlider
       value: 
       objectReference: {fileID: 1012645276234827792}
+    - target: {fileID: 7264182984082148784, guid: fd7d1bd002d4cee4689db6a0028745c8,
+        type: 3}
+      propertyPath: effectRadius
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 7264182984082148784, guid: fd7d1bd002d4cee4689db6a0028745c8,
+        type: 3}
+      propertyPath: exterminationRadius
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823547660546110796, guid: fd7d1bd002d4cee4689db6a0028745c8,
+        type: 3}
+      propertyPath: viewIdField
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd7d1bd002d4cee4689db6a0028745c8, type: 3}

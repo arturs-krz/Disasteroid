@@ -20,9 +20,9 @@ public class PopVegManager : MonoBehaviour
     // pop_table is a tab with dimensions 180 x 360
     // pop_table[i][j] corresponds to the population density of the lattitude i-89.5 and longitude j-179.5
     public static float[][] pop_table;
-    public static long totalPop;
+    public static long totalPop = 0;
     public static float[][] veg_table;
-    public static float totalVeg;
+    public static float totalVeg = 0;
 
     // All necessary CO2 information
     private CO2Manager CO2Manage;
@@ -38,68 +38,81 @@ public class PopVegManager : MonoBehaviour
     private float nextUpdateTime;
     private float updateRate;
 
+    private bool haveTotalPopulation = false;
+
     // Start is called before the first frame update
     void Awake()
     {
-        using (var reader = new StreamReader(@"Assets/Data/population_data.csv"))
+        if (Application.platform != RuntimePlatform.Android)
         {
-            pop_table = new float[180][];
-
-            var line = reader.ReadLine();
-            int k = 0;
-            while (!reader.EndOfStream)
+            using (var reader = new StreamReader(@"Assets/Data/population_data.csv"))
             {
-                line = reader.ReadLine();
-                var values = line.Split(',');
-                pop_table[179 - k] = new float[360];
-                for (int i = 1; i < 361; i++) {
-                    if (values[i] == "99999.0")
-                    {
-                        pop_table[179 - k][i - 1] = 0;
-                    }
-                    else {
-                        pop_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ","));
-                    }
+                pop_table = new float[180][];
 
-                }
-                k += 1;
-            }
-        }
-        using (var reader = new StreamReader(@"Assets/Data/vegetation_data.csv"))
-        {
-            veg_table = new float[180][];
-
-            var line = reader.ReadLine();
-            int k = 0;
-            while (!reader.EndOfStream)
-            {
-                line = reader.ReadLine();
-                var values = line.Split(',');
-                veg_table[179 - k] = new float[360];
-                for (int i = 1; i < 361; i++)
+                var line = reader.ReadLine();
+                int k = 0;
+                while (!reader.EndOfStream)
                 {
-                    if (values[i] == "99999.0")
+                    line = reader.ReadLine();
+                    var values = line.Split(',');
+                    pop_table[179 - k] = new float[360];
+                    for (int i = 1; i < 361; i++)
                     {
-                        veg_table[179 - k][i - 1] = 0;
+                        if (values[i] == "99999.0")
+                        {
+                            pop_table[179 - k][i - 1] = 0;
+                        }
+                        else
+                        {
+                            pop_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ","));
+                        }
+
                     }
-                    else
-                    {
-                        veg_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ",")) + 0.1f;
-                    }
+                    k += 1;
                 }
-                k += 1;
             }
+            using (var reader = new StreamReader(@"Assets/Data/vegetation_data.csv"))
+            {
+                veg_table = new float[180][];
+
+                var line = reader.ReadLine();
+                int k = 0;
+                while (!reader.EndOfStream)
+                {
+                    line = reader.ReadLine();
+                    var values = line.Split(',');
+                    veg_table[179 - k] = new float[360];
+                    for (int i = 1; i < 361; i++)
+                    {
+                        if (values[i] == "99999.0")
+                        {
+                            veg_table[179 - k][i - 1] = 0;
+                        }
+                        else
+                        {
+                            veg_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ",")) + 0.1f;
+                        }
+                    }
+                    k += 1;
+                }
+            }
+            totalVeg = TotalVegetation();
+            totalPop = TotalPopulation();
+            haveTotalPopulation = true;
+
+            Debug.Log("population before anything else is: " + totalPop);
         }
-        totalVeg = TotalVegetation();
-        totalPop = TotalPopulation();
     }
 
     void Start() { 
         // Set population UI
-        popSlider.maxValue = totalPop;
-        popSlider.value = totalPop;
+        if (haveTotalPopulation)
+        {
+            popSlider.maxValue = totalPop;
+            popSlider.value = totalPop;
+        }
 
-        popIncreaseRate = 5000;
+        popIncreaseRate = 1000;
 
         // Set CO2 variables
         CO2Manage = GetComponent<CO2Manager>();
@@ -117,9 +130,18 @@ public class PopVegManager : MonoBehaviour
         if (Time.time > nextUpdateTime)
         {
             // Have population increase automatically over time, rate dependent on CO2 levels
-            CO2Ratio = (CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue;
+            CO2Ratio = ((CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue) * 1000000;
             increasePop = popIncreaseRate * CO2Ratio * Time.deltaTime;
             totalPop += Convert.ToInt64(increasePop);
+
+            if (!haveTotalPopulation)
+            {
+                popSlider.maxValue = totalPop;
+                haveTotalPopulation = true;
+            }
+
+            NetworkDebugger.Log("TOTAL POPULATION: " + totalPop);
+            Debug.Log("TOTAL POPULATION: " + totalPop);
 
             // Update population UI
             popSlider.value = totalPop;
@@ -180,8 +202,10 @@ public class PopVegManager : MonoBehaviour
                 }
             }
         }
-        totalPop -= number_of_dead;
+        totalPop -= (number_of_dead);
         totalVeg -= dead_vegetation;
+        NetworkDebugger.Log("totalPop after explosion is: " + totalPop);
+
         return totalPop;
     }
     public long Explosion(Vector2 v, out long number_of_dead, out float dead_vegetation) {
