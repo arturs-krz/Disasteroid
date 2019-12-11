@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -20,10 +20,6 @@ public class GameControl : MonoBehaviour
     public Color MaxColor;
     public Color MinColor;
 
-
-    private Image populationSliderFill;
-    private Image CO2SliderFill;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -44,10 +40,6 @@ public class GameControl : MonoBehaviour
         CO2.maxValue = MaxVal;
         CO2.value = PD.minValue;
         PD.value = PD.minValue;
-
-        populationSliderFill = PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
-        CO2SliderFill = CO2.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>();
-
     }
 
     public void BombAttack()
@@ -80,11 +72,11 @@ public class GameControl : MonoBehaviour
         //WL.value += Time.deltaTime * CO2.value / 10;
         PD.value += Time.deltaTime * CO2.value / 20;
         Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
-        populationSliderFill.color = colorPD;
+        PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorPD;
 
         CO2.value += Time.deltaTime * (PD.maxValue - PD.value) * 0.001f;
         Color colorCO2 = Color.Lerp(MinColor, MaxColor, (float)CO2.value / MaxVal);
-        CO2SliderFill.color = colorCO2;
+        CO2.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorCO2;
 
         moneyDisplay.text = moneyValue.ToString();
         // if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)

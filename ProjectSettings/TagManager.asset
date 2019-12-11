@@ -9,7 +9,6 @@ TagManager:
   - Earth
   - EnvironmentalLight
   - EarthSync
-  - DataManager
   layers:
   - Default
   - TransparentFX

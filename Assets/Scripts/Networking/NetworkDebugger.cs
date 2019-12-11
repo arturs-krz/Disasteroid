@@ -25,8 +25,6 @@ public class NetworkDebugger : MonoBehaviourPun
         _instance.photonView.RPC("LogFromNetwork", RpcTarget.MasterClient, logMsg);
     }
 
-
-
     [PunRPC]
     void LogFromNetwork(object logObj)
     {
