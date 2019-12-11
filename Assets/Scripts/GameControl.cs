@@ -8,20 +8,24 @@ public class GameControl : MonoBehaviour
 {
     public Slider PD;
     public Slider CO2;
-    int moneyValue;
-    double bombPrice = 10e5;
     public Text userDisplay;
     public Text moneyDisplay;
+    public Text bombDisplay;
     public GameObject gameover;
 
     //color change for sliders
-    public int MaxVal = 100;
+    
     public Color MaxColor;
     public Color MinColor;
 
 
     private Image populationSliderFill;
     private Image CO2SliderFill;
+
+    int BombNum = 5;
+    int MaxVal = 100;
+    int moneyValue;
+    double bombPrice = 10e5;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +41,7 @@ public class GameControl : MonoBehaviour
   
         moneyValue = (int)(PD.value * 10e8);
         moneyDisplay.text = "$ " + moneyValue.ToString("n0");
+        bombDisplay.text = BombNum.ToString();
         PD.minValue = 0f;
         PD.maxValue = MaxVal;
         CO2.minValue = 0f;
@@ -47,6 +52,8 @@ public class GameControl : MonoBehaviour
 
     public void BombAttack()
     {
+        BombNum -= 1;
+        bombDisplay.text = BombNum.ToString();
         PD.value -= PD.maxValue / 20;
         CO2.value += MaxVal / 10;
         moneyValue = (int)(moneyValue + PD.value * 10e6  - bombPrice);
