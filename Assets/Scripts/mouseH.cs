@@ -27,12 +27,12 @@ public class mouseH : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         Image.gameObject.transform.GetComponent<Image>().sprite = styleOn; //Or however you do your color
         selfImage.gameObject.transform.GetComponent<Image>().sprite = SelfstyleOn;
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("onmouse");
-            Image.gameObject.transform.GetComponent<Image>().sprite = styleOn;
-            selfImage.gameObject.transform.GetComponent<Image>().sprite = SelfstyleOn;
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Debug.Log("onmouse");
+        //    Image.gameObject.transform.GetComponent<Image>().sprite = styleOn;
+        //    selfImage.gameObject.transform.GetComponent<Image>().sprite = SelfstyleOn;
+        //}
         if (Input.GetMouseButtonUp(0))
         {
             //rotSpeed = 0;
