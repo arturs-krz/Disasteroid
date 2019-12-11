@@ -8,64 +8,22 @@ public class GameControl : MonoBehaviour
 {
     public Slider PD;
     public Slider CO2;
-    public Text userDisplay;
-    public Text moneyDisplay;
-    public Text bombDisplay;
     public GameObject gameover;
 
-    //color change for sliders
-    
+    //color
     public Color MaxColor;
     public Color MinColor;
-
-
+    
     private Image populationSliderFill;
     private Image CO2SliderFill;
 
-    int BombNum = 5;
+    private bool OpenWindow;
     int MaxVal = 100;
-    int moneyValue;
-    double bombPrice = 10e5;
 
     // Start is called before the first frame update
     void Start()
     {
-        //gameover.SetActive(false);
-        //if (PlayerPrefs.GetString("Username") == "")
-        //{
-        //    PlayerPrefs.SetString("Username", "John Doe");
-        //}
-
-        //userDisplay.text = PlayerPrefs.GetString("Username").ToString() + " is playing!";
-        //userDisplay.text = PlayerPrefs.GetString("Username").ToString();
-  
-        moneyValue = (int)(PD.value * 10e8);
-        moneyDisplay.text = "$ " + moneyValue.ToString("n0");
-        bombDisplay.text = BombNum.ToString();
-        PD.minValue = 0f;
-        PD.maxValue = MaxVal;
-        CO2.minValue = 0f;
-        CO2.maxValue = MaxVal;
-        CO2.value = CO2.maxValue/2;
-        PD.value = PD.maxValue/2;
-    }
-
-    public void BombAttack()
-    {
-        if (BombNum > 0)
-        {
-            BombNum -= 1;
-            PD.value -= PD.maxValue / 20;
-            CO2.value += MaxVal / 10;
-            bombDisplay.text = BombNum.ToString();
-            moneyValue = (int)(moneyValue + PD.value * 10e6 - bombPrice);
-            moneyDisplay.text = "$ " + moneyValue.ToString("n0");
-        }
-    }
-
-    public void SatelitteScan()
-    {
-
+        OpenWindow = false;
     }
 
     public void BacktoMain()
@@ -73,29 +31,45 @@ public class GameControl : MonoBehaviour
         SceneManager.LoadScene("GameStart");
     }
 
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
+    public void Continue()
+    {
+        OpenWindow = false;
+        gameover.SetActive(false);
+        Time.timeScale = 1;
+    }
+
     public void GameOver()
     {
         gameover.SetActive(true);
-        SceneManager.LoadScene("GameStart");
+        //Application.Quit(); 
     }
 
     // Update is called once per frame
     void Update()
     {
-        //WL.value += Time.deltaTime * CO2.value / 10;
-        PD.value += Time.deltaTime * CO2.value / 20;
+        if (Input.GetKeyDown(KeyCode.Escape)) OpenWindow = true;
+        PD.value += Time.deltaTime * 2/100;
         Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
         PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorPD;
 
-        CO2.value -= Time.deltaTime * (PD.maxValue - PD.value) * 0.001f;
         Color colorCO2 = Color.Lerp(MinColor, MaxColor, (float)CO2.value / MaxVal);
         CO2.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorCO2;
 
-        moneyDisplay.text = "$ " + moneyValue.ToString("n0");
-        // if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)
-        // {
-        //     GameOver();
-        // }
-
     }
+
+    private void OnGUI()
+    {
+        if (OpenWindow)
+        {
+            Time.timeScale = 0;
+            GameOver();
+
+        }
+    }
+
 }
