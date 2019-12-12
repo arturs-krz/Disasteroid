@@ -31,8 +31,10 @@ public class BombScript : MonoBehaviourPun
     public void Start()
     {
         Vector3 camPos = Camera.main.gameObject.transform.position;
+        NetworkDebugger.Log("Starting Instance of a Bomb at" + camPos);
 
-        bombCost = 50000000;
+        bombCost = 5000;
+
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonView photonView = PhotonView.Get(this);
@@ -138,14 +140,5 @@ public class BombScript : MonoBehaviourPun
         Destroy(explosion, 2f);
         PhotonNetwork.Destroy(gameObject);
     }
-
-    [PunRPC]
-    void buyStuff(int costs)
-    {
-        // GameObject resourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
-        // MoneyManager moneyManage = resourceManager.GetComponent<MoneyManager>();
-        // moneyManage.currentMoney -= costs;
-    }
-
 }
 
