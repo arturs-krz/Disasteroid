@@ -6,27 +6,27 @@ using Photon.Pun;
 public class BombThrower : MonoBehaviourPun
 {
     int bombCost = 50000;
-    Vector3 localPosition ;
 
     public void BombThrowing()
     {
-        NetworkDebugger.Log("Clikcing on the UI");
+        NetworkDebugger.Log("Clicking on the UI");
         // positioning
-        localPosition = ARController.Instance.earthMarker.transform.InverseTransformPoint(Camera.main.transform.position);
-        photonView.RPC("SpawnBomb", RpcTarget.MasterClient, localPosition);
-        SpawnBomb(localPosition);
+        Vector3 spawnPoint = ARController.Instance.FirstPersonCamera.transform.position + (ARController.Instance.FirstPersonCamera.transform.forward * 0.1f);
+        Vector3 localPosition = ARController.Instance.earthMarker.transform.InverseTransformPoint(spawnPoint);
+        Vector3 localOrientation = ARController.Instance.earthMarker.transform.InverseTransformDirection(ARController.Instance.FirstPersonCamera.transform.forward);
+        photonView.RPC("SpawnBomb", RpcTarget.MasterClient, localPosition, localOrientation);
     }
 
     [PunRPC]
-    void SpawnBomb(Vector3 position)
+    void SpawnBomb(Vector3 position, Vector3 localOrientation)
     {
-        NetworkDebugger.Log("Spwan Bomb __ PunRPC");
-        GameObject resourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
-        moneyManager moneyManage = resourceManager.GetComponent<moneyManager>();
+        Debug.Log("Received bomb spawn request");
+        // GameObject resourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
+        // moneyManager moneyManage = resourceManager.GetComponent<moneyManager>();
 
         //comment this when the other thingy is working
-        moneyManage.currentMoney -= bombCost;
-        PhotonNetwork.Instantiate("AR-bomb", localPosition, Quaternion.identity);
+        // moneyManage.currentMoney -= bombCost;
+        PhotonNetwork.Instantiate("AR-bomb", position, Quaternion.LookRotation(localOrientation));
 
         //if(moneyManage.currentMoney > costs)
         //{

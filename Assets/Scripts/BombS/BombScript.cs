@@ -31,15 +31,13 @@ public class BombScript : MonoBehaviourPun
     public void Start()
     {
         Vector3 camPos = Camera.main.gameObject.transform.position;
-        NetworkDebugger.Log("Starting Instance of a Bomb at" + camPos);
-
         bombCost = 5000;
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("buyStuff", RpcTarget.All, bombCost);
-        }
+        // if (PhotonNetwork.IsMasterClient)
+        // {
+        //     PhotonView photonView = PhotonView.Get(this);
+        //     photonView.RPC("buyStuff", RpcTarget.All, bombCost);
+        // }
 
         countdown = delay;
         // display on screen "searching"
@@ -52,6 +50,8 @@ public class BombScript : MonoBehaviourPun
             transform.SetParent(ARController.Instance.earthMarker.transform);
             transform.localPosition = localPosition;
             position = transform.position;
+
+            NetworkDebugger.Log("Bomb spawned on client");
         }
     }
 
@@ -74,12 +74,12 @@ public class BombScript : MonoBehaviourPun
         if (targetfound == true)
         {
             aposition = asteroid.transform.position;
-            gameObject.transform.position = Vector3.MoveTowards(position, aposition, speed * Time.deltaTime);
+            //gameObject.transform.position = Vector3.MoveTowards(position, aposition, speed * Time.deltaTime);
             position = gameObject.transform.position;
 
-            gameObject.transform.LookAt(aposition);
+            //gameObject.transform.LookAt(aposition);
             
-            NetworkDebugger.Log("ast_pos: " + aposition + " // rocket_pos: " + position);
+            //NetworkDebugger.Log("ast_pos: " + aposition + " // rocket_pos: " + position);
 
             //StartPropellers();
             if (Vector3.Distance(aposition, position) < 1f || asteroid == null)
