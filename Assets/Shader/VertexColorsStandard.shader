@@ -18,6 +18,7 @@ Shader "Custom/VertexColorsStandard" {
  
         sampler2D _MainTex;
         float4 _Color;
+		float _CO2;
  
         struct Input {
             float2 uv_MainTex;
@@ -28,7 +29,7 @@ Shader "Custom/VertexColorsStandard" {
         half _Metallic;
  
         void surf (Input IN, inout SurfaceOutputStandard o) {
-            o.Albedo = IN.color.rgb;
+            o.Albedo = (0.4* IN.color.rgb) + (0.6* lerp(IN.color.rgb, _Color, _CO2));
             
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
