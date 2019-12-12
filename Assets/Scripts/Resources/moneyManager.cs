@@ -56,11 +56,11 @@ public class MoneyManager : MonoBehaviour
 
             populationRatio = (currentPopulationAsFloat/maxPopulationAsFloat) * 10000;
 
-            Debug.Log("The populationRatio is: " + populationRatio);
+            // Debug.Log("The populationRatio is: " + populationRatio);
 
             increaseMoney = populationRatio * updateRate * Time.deltaTime;
 
-            Debug.Log("The increaseMoney is: " + increaseMoney);
+            // Debug.Log("The increaseMoney is: " + increaseMoney);
 
             currentMoney += increaseMoney;
 

@@ -76,20 +76,5 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //WL.value += Time.deltaTime * CO2.value / 10;
-        PD.value += Time.deltaTime * CO2.value / 20;
-        Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
-        populationSliderFill.color = colorPD;
-
-        CO2.value += Time.deltaTime * (PD.maxValue - PD.value) * 0.001f;
-        Color colorCO2 = Color.Lerp(MinColor, MaxColor, (float)CO2.value / MaxVal);
-        CO2SliderFill.color = colorCO2;
-
-        moneyDisplay.text = moneyValue.ToString();
-        // if (PD.value >= PD.maxValue || WL.value >= WL.maxValue || CO2.value >= CO2.maxValue)
-        // {
-        //     GameOver();
-        // }
-
     }
 }

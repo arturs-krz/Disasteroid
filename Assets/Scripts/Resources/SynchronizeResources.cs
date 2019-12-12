@@ -45,7 +45,7 @@ public class SynchronizeResources : MonoBehaviour
             currentPopulation = PopVegManager.totalPop;
 
             // Start network-wide call for all clients to synchronize resource levels
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient && PhotonGameLobby.Instance.connected)
             {
                 photonView.RPC("Synchronize", RpcTarget.Others, currentCO2, currentMoney, currentPopulation);
 

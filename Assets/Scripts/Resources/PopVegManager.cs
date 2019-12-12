@@ -101,7 +101,7 @@ public class PopVegManager : MonoBehaviour
             totalPop = TotalPopulation();
             haveTotalPopulation = true;
 
-            Debug.Log("population before anything else is: " + totalPop);
+            // Debug.Log("population before anything else is: " + totalPop);
         }
     }
 
@@ -136,8 +136,8 @@ public class PopVegManager : MonoBehaviour
 
             increasePop = popIncreaseRate * CO2Ratio * Time.deltaTime;
 
-            Debug.Log("The CO2Ratio is: " + CO2Ratio);
-            Debug.Log("The increasePop is: " + increasePop);
+            // Debug.Log("The CO2Ratio is: " + CO2Ratio);
+            // Debug.Log("The increasePop is: " + increasePop);
 
             totalPop += Convert.ToInt64(increasePop);
 
@@ -147,8 +147,8 @@ public class PopVegManager : MonoBehaviour
                 haveTotalPopulation = true;
             }
 
-            NetworkDebugger.Log("TOTAL POPULATION: " + totalPop);
-            Debug.Log("TOTAL POPULATION: " + totalPop);
+            // NetworkDebugger.Log("TOTAL POPULATION: " + totalPop);
+            // Debug.Log("TOTAL POPULATION: " + totalPop);
 
             // Update population UI
             popSlider.value = totalPop;
@@ -209,9 +209,10 @@ public class PopVegManager : MonoBehaviour
                 }
             }
         }
+        Debug.Log("Hit " + latitude + ";" + longitude + ": " + number_of_dead + " dead.");
         totalPop -= (number_of_dead);
         totalVeg -= dead_vegetation;
-        NetworkDebugger.Log("totalPop after explosion is: " + totalPop);
+        // NetworkDebugger.Log("totalPop after explosion is: " + totalPop);
 
         return totalPop;
     }

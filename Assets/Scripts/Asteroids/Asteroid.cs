@@ -10,8 +10,8 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     private GameObject visualEffect;
 
     // Variables for resources
-    public GameObject ResourceManager;
-    public CO2Manager CO2Manage;
+    private GameObject ResourceManager;
+    private CO2Manager CO2Manage;
 
     private Rigidbody rb;
 
@@ -39,6 +39,8 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     private GameObject lineRendererObjInstance = null;
     private LineRenderer pathLineRenderer;
 
+    private PopVegManager popVegManager;
+
     public static float force = 0.05f;
 
     void Awake()
@@ -51,6 +53,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
         // Set CO2 variables
         ResourceManager = GameObject.FindGameObjectWithTag("ResourceManager");
         CO2Manage = ResourceManager.GetComponent<CO2Manager>();
+        popVegManager = GameObject.FindObjectOfType<PopVegManager>();
 
         if (photonView.IsMine)
         {
@@ -88,6 +91,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
     void OnDestroy()
     {
+        PhoneVibration.Vibrate(200);
         Destroy(pathLineRenderer);
         Destroy(lineRendererObjInstance);
     }
@@ -196,8 +200,8 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             Vector2 coordinates = GetImpactCoordinates(other, transform.position);
             long nOfDead;
             float dead_veg;
-            GameObject.FindObjectOfType<PopVegManager>().Explosion(coordinates, out nOfDead, out dead_veg);
-            Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
+            popVegManager.Explosion(coordinates, out nOfDead, out dead_veg);
+            //Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
 
             // Increase CO2 value upon impact
             if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2Manage.impactCO2))
