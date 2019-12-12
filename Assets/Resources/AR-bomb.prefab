@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6934781684308956757}
   - component: {fileID: -2855058664956063305}
   - component: {fileID: -9021565298648337073}
+  - component: {fileID: 4128998096031798734}
   m_Layer: 0
   m_Name: AR-bomb
   m_TagString: AR-bomb
@@ -123,3 +124,19 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!54 &4128998096031798734
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8647365656079819401}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

@@ -153,7 +153,6 @@ public class PopVegManager : MonoBehaviour
             // Debug.Log("TOTAL POPULATION: " + totalPop);
 
             // Update population UI
-            NetworkDebugger.Log("Updating population!");
             popSlider.value = totalPop;
             
             // Set timer

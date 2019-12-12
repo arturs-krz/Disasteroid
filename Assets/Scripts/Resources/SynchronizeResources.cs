@@ -60,7 +60,6 @@ public class SynchronizeResources : MonoBehaviour
     [PunRPC]
     void Synchronize(float CO2, float money, long population, long initialPopulation)
     {
-        NetworkDebugger.Log("Getting resources from server");
         CO2Manager CO2ManageSynch = GetComponent<CO2Manager>();
         MoneyManager MoneyManageSynch = GetComponent<MoneyManager>();
 
