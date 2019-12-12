@@ -22,6 +22,7 @@ public class PopVegManager : MonoBehaviour
     // pop_table[i][j] corresponds to the population density of the lattitude i-89.5 and longitude j-179.5
     public static float[][] pop_table;
     public static long totalPop = 0;
+    public static long initialPop = 0;
     public static float[][] veg_table;
     public static float totalVeg = 0;
 
@@ -99,6 +100,7 @@ public class PopVegManager : MonoBehaviour
             }
             totalVeg = TotalVegetation();
             totalPop = TotalPopulation();
+            initialPop = totalPop;
             haveTotalPopulation = true;
 
             // Debug.Log("population before anything else is: " + totalPop);
@@ -109,7 +111,7 @@ public class PopVegManager : MonoBehaviour
         // Set population UI
         if (haveTotalPopulation)
         {
-            popSlider.maxValue = totalPop;
+            popSlider.maxValue = initialPop;
             popSlider.value = totalPop;
         }
 
@@ -122,7 +124,7 @@ public class PopVegManager : MonoBehaviour
 
         // Set timer variables
         updateRate = 0.5f;
-        nextUpdateTime = updateRate;
+        nextUpdateTime = Time.time + updateRate;
     }
 
     // Update is called once per frame
@@ -141,9 +143,9 @@ public class PopVegManager : MonoBehaviour
 
             totalPop += Convert.ToInt64(increasePop);
 
-            if (!haveTotalPopulation)
+            if (!haveTotalPopulation && initialPop > 0)
             {
-                popSlider.maxValue = totalPop;
+                popSlider.maxValue = initialPop;
                 haveTotalPopulation = true;
             }
 
@@ -151,10 +153,11 @@ public class PopVegManager : MonoBehaviour
             // Debug.Log("TOTAL POPULATION: " + totalPop);
 
             // Update population UI
+            NetworkDebugger.Log("Updating population!");
             popSlider.value = totalPop;
             
             // Set timer
-            nextUpdateTime += updateRate;
+            nextUpdateTime = Time.time + updateRate;
         }
     }
 

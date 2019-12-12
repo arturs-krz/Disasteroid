@@ -43,7 +43,7 @@ public class FindShootAsteroid : MonoBehaviourPun
         {
             lifetimeTimer = 0f;
         }
-        UIMessage.ShowMessage("Satellite has been spawned!");
+        UIMessage.ShowMessage("Satellite has been spawned! (-$1B)");
 
         //Ensure the method of calculating distances to targets is not continuously updated for maintainability reasons, only twice a second
         InvokeRepeating("UpdateTarget", 0f, 0.5f);

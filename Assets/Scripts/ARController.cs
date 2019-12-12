@@ -135,7 +135,7 @@ public class ARController : MonoBehaviour
                         //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
 
                         earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
-                        earthInstance.transform.Translate(new Vector3(0, 0.3f, 0), Space.World);
+                        earthInstance.transform.Translate(new Vector3(0, 1f, 0), Space.World);
                         anchorTransform = imageAnchor.transform;
 
                         earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);

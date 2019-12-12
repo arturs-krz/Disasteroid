@@ -14,6 +14,7 @@ public class SynchronizeResources : MonoBehaviour
     private float currentCO2;
     private float currentMoney;
     private long currentPopulation;
+    private long initialPopulation;
 
     private CO2Manager CO2Manage;
     private MoneyManager MoneyManage;
@@ -40,14 +41,14 @@ public class SynchronizeResources : MonoBehaviour
     {
         if (Time.time > nextUpdateTime)
         {
-            currentCO2 = CO2Manage.currentCO2;
-            currentMoney = MoneyManage.currentMoney;
-            currentPopulation = PopVegManager.totalPop;
-
             // Start network-wide call for all clients to synchronize resource levels
             if (PhotonNetwork.IsMasterClient && PhotonGameLobby.Instance.connected)
             {
-                photonView.RPC("Synchronize", RpcTarget.Others, currentCO2, currentMoney, currentPopulation);
+                currentCO2 = CO2Manage.currentCO2;
+                currentMoney = MoneyManage.currentMoney;
+                currentPopulation = PopVegManager.totalPop;
+                initialPopulation = PopVegManager.initialPop;
+                photonView.RPC("Synchronize", RpcTarget.Others, currentCO2, currentMoney, currentPopulation, initialPopulation);
 
                 // Set timer
                 nextUpdateTime += updateRate;
@@ -57,14 +58,15 @@ public class SynchronizeResources : MonoBehaviour
 
     // Method for all clients to synchronize resources according to Master client
     [PunRPC]
-    void Synchronize(float CO2, float Money, long Population)
+    void Synchronize(float CO2, float money, long population, long initialPopulation)
     {
         NetworkDebugger.Log("Getting resources from server");
         CO2Manager CO2ManageSynch = GetComponent<CO2Manager>();
         MoneyManager MoneyManageSynch = GetComponent<MoneyManager>();
 
         CO2ManageSynch.currentCO2 = CO2;
-        MoneyManageSynch.currentMoney = Money;
-        PopVegManager.totalPop = Population;
+        MoneyManageSynch.currentMoney = money;
+        PopVegManager.totalPop = population;
+        PopVegManager.initialPop = initialPopulation;
     }
 }

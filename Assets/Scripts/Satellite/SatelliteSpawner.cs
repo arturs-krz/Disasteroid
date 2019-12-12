@@ -9,6 +9,8 @@ public class SatelliteSpawner : MonoBehaviourPun
 
     public static bool isSatelliteActive = false;
 
+    private MoneyManager moneyManager;
+
     public void Awake()
     {
         if (_instance != null && _instance != this)
@@ -24,12 +26,12 @@ public class SatelliteSpawner : MonoBehaviourPun
     // Start is called before the first frame update
     void Start()
     {
-        
+        moneyManager = GameObject.FindWithTag("ResourceManager").GetComponent<MoneyManager>();
     }
 
     public static void SpawnSatellite()
     {
-        if (!isSatelliteActive)
+        if (!isSatelliteActive && _instance.moneyManager.currentMoney >= 1e9f)
         {
             isSatelliteActive = true;
             Transform cameraTransform = ARController.Instance.FirstPersonCamera.transform;
@@ -41,7 +43,12 @@ public class SatelliteSpawner : MonoBehaviourPun
             Vector3 localOrientation = ARController.Instance.earthMarker.transform.InverseTransformDirection(cameraTransform.forward);
             // Vector3 localOrientation = new Vector3(0,0,0);
             
+            _instance.moneyManager.currentMoney -= 1e9f;
             _instance.photonView.RPC("SpawnSatelliteOnServer", RpcTarget.MasterClient, localPosition, localOrientation);
+        }
+        else if (_instance.moneyManager.currentMoney < 1e9f)
+        {
+            UIMessage.ShowMessage("Insufficient funds!");
         }
     }
 
@@ -56,11 +63,13 @@ public class SatelliteSpawner : MonoBehaviourPun
     {
         if (PhotonNetwork.IsMasterClient && !isSatelliteActive)
         {
-            // Check and deduce funds
-
-            Debug.Log("Instantiating satellite on the server");
-            PhotonNetwork.Instantiate("AR-Satellite", localPosition, Quaternion.LookRotation(localOrientation));
-            isSatelliteActive = true;
+            if (moneyManager.currentMoney >= 1e9f)
+            {
+                moneyManager.currentMoney -= 1e9f;
+                Debug.Log("Instantiating satellite on the server");
+                PhotonNetwork.Instantiate("AR-Satellite", localPosition, Quaternion.LookRotation(localOrientation));
+                isSatelliteActive = true;
+            }
         }
     }
 }
