@@ -52,8 +52,11 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) OpenWindow = true;
-        //PD.value += Time.deltaTime * 2/100;
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            OpenWindow = true;
+        }
+
         Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
         PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorPD;
 
