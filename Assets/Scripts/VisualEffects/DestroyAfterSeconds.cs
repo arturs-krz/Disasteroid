@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class DestroyAfterSeconds : MonoBehaviour
+public class DestroyAfterSeconds : MonoBehaviourPun
 {
     private float timer;
     public float decayTime;
@@ -19,7 +19,7 @@ public class DestroyAfterSeconds : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if (timer > decayTime)
+        if (photonView.IsMine && timer > decayTime)
         {
             PhotonNetwork.Destroy(gameObject);
         }

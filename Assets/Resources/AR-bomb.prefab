@@ -101,6 +101,7 @@ MonoBehaviour:
   speed: 500
   radius: 50
   force: 500
+  range: 1
   delay: 3
 --- !u!114 &-9021565298648337073
 MonoBehaviour:

@@ -12,9 +12,9 @@ public class BombScript : MonoBehaviourPun
     private GameObject targetAsteroid;
 
     // speed in which the bomb goes towards the target
-    public float speed = 5f;
-    public float radius = 2f;
-    public float force = 10f;
+    public float speed = 2f;
+    public float radius = 1f;
+    public float force = 0.1f;
 
     private int bombCost;
 
@@ -54,8 +54,6 @@ public class BombScript : MonoBehaviourPun
             transform.localPosition = localPosition;
             transform.localRotation = localRotation;
             position = transform.position;
-
-            NetworkDebugger.Log("Bomb spawned on client");
         }
 
         SeekClosest();
@@ -64,18 +62,22 @@ public class BombScript : MonoBehaviourPun
     void Update()
     {
         countdown -= Time.deltaTime;
-        if (countdown <= 0f && hasExploded == false)
+        if (countdown <= 0f && hasExploded == false  && photonView.IsMine)
         {
-            NetworkDebugger.Log("Ready to boom boom baby");
             Explode();
-            hasExploded = true;
         }
 
         if (targetFound == true)
         {
-            Vector3 direction = (targetAsteroid.transform.position - transform.position).normalized;
+            Vector3 direction = targetAsteroid.transform.position - transform.position;
             transform.LookAt(targetAsteroid.transform.position);
-            rb.AddForce(direction * 0.5f);
+            // rb.AddForce(direction.normalized * 0.5f);
+            transform.Translate(direction.normalized * speed * Time.deltaTime);
+
+            if (direction.magnitude < 0.2f && photonView.IsMine)
+            {
+                Explode();
+            }
         }
     }
 
@@ -97,15 +99,15 @@ public class BombScript : MonoBehaviourPun
                 targetFound = true;
             }
         }
+
+        if (targetFound == false)
+        {
+            rb.angularVelocity = new Vector3(Random.value * 0.2f, Random.value * 0.2f, Random.value * 0.2f);
+        }
     }
 
     void Explode()
-    {
-        //Destroy(propellers);
-        NetworkDebugger.Log("BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM");
-        
-        GameObject explosion = Instantiate(explosionEffect, transform.position, transform.rotation);
-
+    {   
         if (PhotonNetwork.IsMasterClient)
         {
             foreach (GameObject nearbyAsteroid in AsteroidSpawner.asteroidInstances)
@@ -118,10 +120,11 @@ public class BombScript : MonoBehaviourPun
                 }
                 // damage
             }
+            PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
+            PhotonNetwork.Destroy(gameObject);
         }
+        hasExploded = true;
         
-        Destroy(explosion, 2f);
-        PhotonNetwork.Destroy(gameObject);
     }
 }
 
