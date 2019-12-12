@@ -23,7 +23,7 @@ public class GameControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        OpenWindow = false;
+        //OpenWindow = false;
     }
 
     public void BacktoMain()
@@ -38,7 +38,7 @@ public class GameControl : MonoBehaviour
 
     public void Continue()
     {
-        OpenWindow = false;
+        //OpenWindow = false;
         gameover.SetActive(false);
         Time.timeScale = 1;
     }
