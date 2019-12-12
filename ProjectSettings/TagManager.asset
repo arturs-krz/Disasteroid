@@ -10,10 +10,11 @@ TagManager:
   - EnvironmentalLight
   - EarthSync
   - DataManager
-  - Asteroid
   - Land
   - Water
-  - AR-bomb
+  - Asteroid
+  - Bullet
+  - ResourceManager
   layers:
   - Default
   - TransparentFX

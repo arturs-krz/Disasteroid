@@ -22,6 +22,17 @@ public class ARController : MonoBehaviour
     /// </summary>
     public Camera FirstPersonCamera;
 
+    /// <summary>
+    /// Time required to look at the satellite marker for it to trigger and spawn
+    /// </summary>
+    public float satelliteSpawnTime = 2f;
+
+    public GameObject GameUIContainer;
+    public GameObject UIFramesContainer;
+    private GameObject earthFinderFrame;
+    private GameObject satelliteFinderFrame;
+    private Image satelliteFinderProgressFill;
+
     public GameObject earthPrefab;
     public GameObject earthInstance { get; private set; }
 
@@ -39,6 +50,12 @@ public class ARController : MonoBehaviour
     private bool m_IsQuitting = false;
 
     private bool isAndroid = true;
+
+    private float satelliteTriggerTimer = 0f;
+    private bool satelliteTriggerActive = false;
+    private float satelliteLastSeenTimer = 0f;
+
+    private Vector3 lastObservationPosition = new Vector3(0,0,0);
 
     private List<AugmentedImage> trackedImages = new List<AugmentedImage>();
 
@@ -69,6 +86,16 @@ public class ARController : MonoBehaviour
         {
             // If we're not on Android, insantiate earth at origin.
             earthInstance = Instantiate(earthPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            UIMessage.ShowMessage("Ayyyy");
+        }
+        else
+        {
+            earthFinderFrame = UIFramesContainer.transform.Find("EarthFrame").gameObject;
+            satelliteFinderFrame = UIFramesContainer.transform.Find("SatelliteFrame").gameObject;
+            satelliteFinderProgressFill = satelliteFinderFrame.transform.Find("Filler").gameObject.GetComponent<Image>();
+
+            earthFinderFrame.SetActive(true);
+            GameUIContainer.SetActive(false);
         }
     }
     /// <summary>
@@ -93,36 +120,102 @@ public class ARController : MonoBehaviour
 
         Session.GetTrackables<AugmentedImage>(trackedImages, TrackableQueryFilter.Updated);
 
+        satelliteLastSeenTimer += Time.deltaTime;
+        bool satelliteTriggerStarted = false;
+
+
         foreach (AugmentedImage image in trackedImages)
-        {    
-            if (image.TrackingState == TrackingState.Tracking && earthInstance == null)
+        {
+            switch (image.Name)
             {
-                Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
-                //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
+                case "Earth":
+                    if (image.TrackingState == TrackingState.Tracking && earthInstance == null)
+                    {
+                        Anchor imageAnchor = image.CreateAnchor(image.CenterPose);
+                        //imageAnchors.Add(image.DatabaseIndex, imageAnchor);
 
-                earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
-                earthInstance.transform.Translate(new Vector3(0, 0.3f, 0), Space.World);
-                anchorTransform = imageAnchor.transform;
+                        earthInstance = Instantiate(earthPrefab, imageAnchor.transform);
+                        earthInstance.transform.Translate(new Vector3(0, 1f, 0), Space.World);
+                        anchorTransform = imageAnchor.transform;
 
-                earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);
-                earthMarker.transform.localScale = new Vector3(1f,1f,1f);
-                earthMarker.transform.position = earthInstance.transform.position;
+                        earthMarker = Instantiate(new GameObject("EarthMarker"), imageAnchor.transform);
+                        earthMarker.transform.localScale = new Vector3(1f, 1f, 1f);
+                        earthMarker.transform.position = earthInstance.transform.position;
 
-                GameObject environmentalLight = GameObject.FindWithTag("EnvironmentalLight");
-                environmentalLight.transform.SetParent(earthMarker.transform);
-                environmentalLight.transform.localPosition = new Vector3(0,0,-1);
+                        GameObject environmentalLight = GameObject.FindWithTag("EnvironmentalLight");
+                        environmentalLight.transform.SetParent(earthMarker.transform);
+                        environmentalLight.transform.localPosition = new Vector3(0, 0, -1);
 
-                fedLatestInstance = false;
+                        fedLatestInstance = false;
 
-                // When on mobile, join the game only after we've insantiated the earth
-                // and know the world origin.
-                PhotonGameLobby.Instance.JoinGame();
 
+                        if (earthFinderFrame != null)
+                        {
+                            earthFinderFrame.SetActive(false);
+                        }
+                        GameUIContainer.SetActive(true);
+
+                        // When on mobile, join the game only after we've insantiated the earth
+                        // and know the world origin.
+                        PhotonGameLobby.Instance.JoinGame();
+
+                    }
+                    else if (image.TrackingState == TrackingState.Stopped)
+                    {
+                        Destroy(earthInstance);
+                        Destroy(earthMarker);
+                    }
+                    break;
+                case "Satellite":
+
+                    // The satellite marker is on a small object suspended somewhere in space,
+                    // so ARCore won't really be able to do full tracking for it and get its position in the scene.
+                    // It does see the image though, in that case the tracking state is Paused.
+                    if (!SatelliteSpawner.isSatelliteActive && (image.TrackingState == TrackingState.Paused || image.TrackingState == TrackingState.Tracking))
+                    {
+                        satelliteLastSeenTimer = 0f;
+                        lastObservationPosition = FirstPersonCamera.transform.position;
+                        
+                        if (satelliteTriggerActive == false && earthMarker != null)
+                        {
+                            if ((earthMarker.transform.position - FirstPersonCamera.transform.position).magnitude < 1f)
+                            {
+                                // too close to Earth, don't allow
+                                break;
+                            }
+                            
+                            satelliteFinderFrame.SetActive(true);
+                            satelliteFinderProgressFill.fillAmount = 0f;
+
+                            satelliteTriggerTimer = 0f;
+                            satelliteTriggerActive = true;
+                            satelliteTriggerStarted = true;
+                        }
+                    }
+                    break;
             }
-            else if (image.TrackingState == TrackingState.Stopped)
+
+            if (satelliteTriggerActive && !satelliteTriggerStarted)
             {
-                Destroy(earthInstance);
-                Destroy(earthMarker);
+                // NetworkDebugger.Log((FirstPersonCamera.transform.position - lastObservationPosition).magnitude);
+                if ((FirstPersonCamera.transform.position - lastObservationPosition).magnitude > 0.2f)
+                // if (satelliteLastSeenTimer > 1.4f)
+                {
+                    satelliteTriggerActive = false;
+                    satelliteFinderFrame.SetActive(false);
+                }
+                else
+                {
+                    satelliteTriggerTimer += Time.deltaTime;
+                    satelliteFinderProgressFill.fillAmount = Mathf.Clamp01(satelliteTriggerTimer / satelliteSpawnTime);
+
+                    if (satelliteTriggerTimer >= satelliteSpawnTime)
+                    {
+                        SatelliteSpawner.SpawnSatellite();
+                        satelliteTriggerActive = false;
+                        satelliteFinderFrame.SetActive(false);
+                    }
+                }   
             }
         }
 

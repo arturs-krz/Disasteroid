@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 4096475565944363309}
   - component: {fileID: 1293390848614857490}
   - component: {fileID: 3950112807944479843}
-  - component: {fileID: 7698746018907845887}
   m_Layer: 0
   m_Name: DustExplosion
   m_TagString: Untagged
@@ -4868,28 +4867,13 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
+  Synchronization: 0
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 7698746018907845887}
+  - {fileID: 0}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &7698746018907845887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025285306637258}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 0
-  m_SynchronizeRotation: 0
-  m_SynchronizeScale: 0
 --- !u!1 &1129888670383888
 GameObject:
   m_ObjectHideFlags: 0

@@ -78,6 +78,8 @@ public class AsteroidSpawner : MonoBehaviour
                 Rigidbody rigidbody = spawnedAsteroid.GetComponent<Rigidbody>();
                 rigidbody.angularVelocity = angularVelocity;
                 rigidbody.velocity = velocity;
+
+                numberOfAsteroids += 1;
                 
                 Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * GenerateRandomOffset(0.6f));
                 spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
@@ -91,7 +93,7 @@ public class AsteroidSpawner : MonoBehaviour
                 //rigidbody.angularVelocity = angularVelocity;
                 //rigidbody.velocity = velocity;
 
-                numberOfAsteroids += 1;
+                
             }
         }
     }
