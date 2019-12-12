@@ -7,7 +7,7 @@ public class Laser : MonoBehaviour
     private Transform target;
 
     //Set bullet speed
-    public float speed = 35f;
+    public float speed = 15f;
 
     private Vector3 dir;
 

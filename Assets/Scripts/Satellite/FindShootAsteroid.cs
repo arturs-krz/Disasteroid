@@ -22,6 +22,9 @@ public class FindShootAsteroid : MonoBehaviourPun
 
     public Transform firePoint;
 
+    private float lifetimeTimer;
+    private static float MAX_LIFETIME = 30f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,10 +39,20 @@ public class FindShootAsteroid : MonoBehaviourPun
             transform.localPosition = position;
             transform.localRotation = rotation;
         }
-        Debug.Log("Satellite spawned!");
+        else
+        {
+            lifetimeTimer = 0f;
+        }
+        UIMessage.ShowMessage("Satellite has been spawned!");
 
         //Ensure the method of calculating distances to targets is not continuously updated for maintainability reasons, only twice a second
         InvokeRepeating("UpdateTarget", 0f, 0.5f);
+    }
+
+    void OnDestroy()
+    {
+        SatelliteSpawner.isSatelliteActive = false;
+        UIMessage.ShowMessage("Satellite has expired!");
     }
 
     void UpdateTarget()
@@ -75,6 +88,17 @@ public class FindShootAsteroid : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
+        if (photonView.IsMine)
+        {
+            lifetimeTimer += Time.deltaTime;
+            if (lifetimeTimer > MAX_LIFETIME)
+            {
+                SatelliteSpawner.isSatelliteActive = false;
+                PhotonNetwork.Destroy(gameObject);
+                return;
+            }
+        }
+
         //If there is no target, ensure nothing is done
         if (target == null)
         {
@@ -82,10 +106,10 @@ public class FindShootAsteroid : MonoBehaviourPun
         }
 
         //Coordinates that show in which direction the enemy is
-        Vector3 direction = target.position - transform.position;
+        Vector3 direction = (target.position - transform.position).normalized;
 
         //How to rotate to look in that direction
-        Quaternion lookRotation = Quaternion.LookRotation(transform.InverseTransformDirection(direction));
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
 
         //Convert from Quaternion to euler angle
         //Lerp for smooth transitions

@@ -25,7 +25,7 @@ public class ARController : MonoBehaviour
     /// <summary>
     /// Time required to look at the satellite marker for it to trigger and spawn
     /// </summary>
-    public float satelliteSpawnTime = 3f;
+    public float satelliteSpawnTime = 2f;
 
     public GameObject GameUIContainer;
     public GameObject UIFramesContainer;
@@ -86,6 +86,7 @@ public class ARController : MonoBehaviour
         {
             // If we're not on Android, insantiate earth at origin.
             earthInstance = Instantiate(earthPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            UIMessage.ShowMessage("Ayyyy");
         }
         else
         {

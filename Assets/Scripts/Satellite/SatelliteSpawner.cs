@@ -33,13 +33,13 @@ public class SatelliteSpawner : MonoBehaviourPun
         {
             isSatelliteActive = true;
             Transform cameraTransform = ARController.Instance.FirstPersonCamera.transform;
-            Vector3 spawnPosition = cameraTransform.position + (cameraTransform.forward * 0.2f);
+            Vector3 spawnPosition = cameraTransform.position + (cameraTransform.forward * 0.3f) + (cameraTransform.up * 0.1f);
             // Vector3 spawnOrientation = (Quaternion.LookRotation(cameraTransform.forward, Vector3.up) * Quaternion.Euler(0, 90f, 0)).eulerAngles;
 
             NetworkDebugger.Log("Requesting satellite spawn");
             Vector3 localPosition = ARController.Instance.earthMarker.transform.InverseTransformPoint(spawnPosition);
-            //Vector3 localOrientation = ARController.Instance.earthMarker.transform.InverseTransformDirection(-cameraTransform.forward);
-            Vector3 localOrientation = new Vector3(0,0,0);
+            Vector3 localOrientation = ARController.Instance.earthMarker.transform.InverseTransformDirection(cameraTransform.forward);
+            // Vector3 localOrientation = new Vector3(0,0,0);
             
             _instance.photonView.RPC("SpawnSatelliteOnServer", RpcTarget.MasterClient, localPosition, localOrientation);
         }
@@ -59,7 +59,7 @@ public class SatelliteSpawner : MonoBehaviourPun
             // Check and deduce funds
 
             Debug.Log("Instantiating satellite on the server");
-            PhotonNetwork.Instantiate("AR-Satellite", localPosition, Quaternion.Euler(localOrientation));
+            PhotonNetwork.Instantiate("AR-Satellite", localPosition, Quaternion.LookRotation(localOrientation));
             isSatelliteActive = true;
         }
     }
