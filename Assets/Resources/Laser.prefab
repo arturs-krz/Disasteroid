@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 11489952}
   - component: {fileID: 10825254}
   - component: {fileID: 350970198893358810}
+  - component: {fileID: -8650319193180199194}
   - component: {fileID: 2230646624756750150}
-  - component: {fileID: 4598466890079028140}
   m_Layer: 0
   m_Name: Laser
   m_TagString: Untagged
@@ -175,6 +175,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+--- !u!114 &-8650319193180199194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e319df8eeba1f34a8e95ba1ee5858fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2230646624756750150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,25 +202,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 3
+  Synchronization: 0
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 4598466890079028140}
+  - {fileID: 0}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &4598466890079028140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 136330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 1

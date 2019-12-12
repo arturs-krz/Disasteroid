@@ -7,7 +7,7 @@ public class Laser : MonoBehaviour
     private Transform target;
 
     //Set bullet speed
-    public float speed = 70f;
+    public float speed = 15f;
 
     private Vector3 dir;
 
@@ -45,11 +45,16 @@ public class Laser : MonoBehaviour
 
     void HitTarget()
     {
-        //Upon target hit, initiate special effect
-        GameObject visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
-        
-        //Destroy special effect, bullet and asteroid
-        PhotonNetwork.Destroy(target.gameObject);
-        PhotonNetwork.Destroy(gameObject);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            //Upon target hit, initiate special effect
+            GameObject visualEffect = PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
+            
+            //Destroy special effect, bullet and asteroid
+            PhotonNetwork.Destroy(target.gameObject);
+            AsteroidSpawner.numberOfAsteroids -= 1;
+
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 }

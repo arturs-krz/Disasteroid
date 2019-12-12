@@ -22,7 +22,10 @@ public class NetworkDebugger : MonoBehaviourPun
 
     public static void Log(object logMsg)
     {
-        _instance.photonView.RPC("LogFromNetwork", RpcTarget.MasterClient, logMsg);
+        if (!PhotonNetwork.IsMasterClient && PhotonGameLobby.Instance.connected)
+        {
+            _instance.photonView.RPC("LogFromNetwork", RpcTarget.MasterClient, logMsg);
+        }
     }
 
 

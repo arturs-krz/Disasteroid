@@ -17,6 +17,7 @@ Shader "Custom/VertexColorsStandard" {
         #pragma target 3.0
  
         sampler2D _MainTex;
+        float4 _Color;
  
         struct Input {
             float2 uv_MainTex;
@@ -28,6 +29,7 @@ Shader "Custom/VertexColorsStandard" {
  
         void surf (Input IN, inout SurfaceOutputStandard o) {
             o.Albedo = IN.color.rgb;
+            
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

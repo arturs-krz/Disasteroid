@@ -4,47 +4,79 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class moneyManager : MonoBehaviour
+public class MoneyManager : MonoBehaviour
 {
-    private int maxPopulation;
-    private int currentPopulation;
-    private float populationRatio;
+    public Text textUI;
 
+    [HideInInspector]
+    public long maxPopulation;
+    [HideInInspector]
+    public long currentPopulation;
+    [HideInInspector]
+    public float populationRatio;
+
+    [HideInInspector]
     public int updateRate;
-    private float updateMoney;
+    [HideInInspector]
+    public float increaseMoney;
+    [HideInInspector]
     public float currentMoney;
 
-    public Text textUI;
+    private float nextUpdateTime;
+    private float updateRateTime;
+
+    private float maxPopulationAsFloat;
+    private float currentPopulationAsFloat;
 
     // Start is called before the first frame update
     void Start()
     {
-        //Set necessary variables
-        maxPopulation = 1; //Reference proper script
+        maxPopulation = 6167860246;
+        maxPopulationAsFloat = Convert.ToSingle(maxPopulation/100000);
+
         currentMoney = 10000000000;
-        updateRate = 1000000;
+        updateRate = 10000;
 
         MoneyToText(currentMoney, textUI);
+
+        updateRateTime = 0.5f;
+        nextUpdateTime = updateRateTime;
+
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Update currentMoney based on populationRatio and updateRate
-        currentPopulation = 1; //Reference proper script
-        populationRatio = currentPopulation / maxPopulation;
-        updateMoney = populationRatio * updateRate * Time.deltaTime;
-        currentMoney += updateMoney;
+        if (Time.time > nextUpdateTime)
+        {
+            // Update currentMoney based on populationRatio and updateRate
+            currentPopulation = PopVegManager.totalPop;
+            currentPopulationAsFloat = Convert.ToSingle(currentPopulation / 100000);
 
-        //Call to method to update the money UI 
-        MoneyToText(currentMoney, textUI);
+            populationRatio = (currentPopulationAsFloat/maxPopulationAsFloat) * 10000;
+
+            // Debug.Log("The populationRatio is: " + populationRatio);
+
+            increaseMoney = populationRatio * updateRate * Time.deltaTime;
+
+            // Debug.Log("The increaseMoney is: " + increaseMoney);
+
+            currentMoney += increaseMoney;
+
+            // Call to method to update the money UI 
+            MoneyToText(currentMoney, textUI);
+
+            // Set timer for update
+            nextUpdateTime += updateRateTime;
+        }
     }
 
     void MoneyToText(float currentMoney, Text textUI)
     {
         float previewMoney;
 
-        //update money UI with correct format
+        // Update money UI with correct format
         if ((currentMoney / 1000000000) > 1)
         {
             previewMoney = currentMoney / 1000000000;

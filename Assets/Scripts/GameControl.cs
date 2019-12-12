@@ -58,11 +58,11 @@ public class GameControl : MonoBehaviour
         //    GameOver();
         //}
 
-        Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
-        PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorPD;
+        // Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
+        // PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorPD;
 
-        Color colorCO2 = Color.Lerp(MinColor, MaxColor, (float)CO2.value / MaxVal);
-        CO2.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorCO2;
+        // Color colorCO2 = Color.Lerp(MinColor, MaxColor, (float)CO2.value / MaxVal);
+        // CO2.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorCO2;
 
     }
 }
