@@ -32,32 +32,32 @@ public class GameControl : MonoBehaviour
         SceneManager.LoadScene("GameStart");
     }
 
-    public void ExitGame()
-    {
-        Application.Quit();
-    }
+    //public void ExitGame()
+    //{
+    //    Application.Quit();
+    //}
 
-    public void Continue()
-    {
-        //OpenWindow = false;
-        gameover.SetActive(false);
-        Time.timeScale = 1;
-    }
+    //public void Continue()
+    //{
+    //    //OpenWindow = false;
+    //    gameover.SetActive(false);
+    //    Time.timeScale = 1;
+    //}
 
-    public void GameOver()
-    {
-        gameover.SetActive(true);
-        //Application.Quit(); 
-    }
+    //public void GameOver()
+    //{
+    //    gameover.SetActive(true);
+    //    //Application.Quit(); 
+    //}
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            Time.timeScale = 0;
-            GameOver();
-        }
+        //if (Input.GetKey(KeyCode.Escape))
+        //{
+        //    Time.timeScale = 0;
+        //    GameOver();
+        //}
 
         Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
         PD.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorPD;
