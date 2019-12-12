@@ -24,7 +24,7 @@ public class CO2Manager : MonoBehaviour
     {
         maxCO2 = 100;
         currentCO2 = 20;
-        criticalCO2 = Convert.ToSingle(maxCO2 * 0.6);
+        criticalCO2 = Convert.ToSingle(maxCO2 * 0.75);
         impactCO2 = 2f;   
     }
     
@@ -34,7 +34,7 @@ public class CO2Manager : MonoBehaviour
         CO2Slider.maxValue = maxCO2;
         CO2Slider.value = currentCO2;
 
-        // Set timer variables
+        // Set timer variables for update call
         updateRate = 0.5f;
         nextUpdateTime = updateRate;
     }

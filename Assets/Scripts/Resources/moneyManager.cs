@@ -22,23 +22,27 @@ public class MoneyManager : MonoBehaviour
     [HideInInspector]
     public float currentMoney;
 
-    float currentPopulationInt;
-    float maxPopulationInt;
-
     private float nextUpdateTime;
     private float updateRateTime;
+
+    private float maxPopulationAsFloat;
+    private float currentPopulationAsFloat;
 
     // Start is called before the first frame update
     void Start()
     {
-        maxPopulation = 6167860246/10000000;
+        maxPopulation = 6167860246;
+        maxPopulationAsFloat = Convert.ToSingle(maxPopulation/100000);
+
         currentMoney = 10000000000;
-        updateRate = 1000000000;
+        updateRate = 10000;
 
         MoneyToText(currentMoney, textUI);
 
         updateRateTime = 0.5f;
         nextUpdateTime = updateRateTime;
+
+        
     }
 
     // Update is called once per frame
@@ -46,31 +50,24 @@ public class MoneyManager : MonoBehaviour
     {
         if (Time.time > nextUpdateTime)
         {
-            //Update currentMoney based on populationRatio and updateRate
-            currentPopulation = PopVegManager.totalPop/10000000;
+            // Update currentMoney based on populationRatio and updateRate
+            currentPopulation = PopVegManager.totalPop;
+            currentPopulationAsFloat = Convert.ToSingle(currentPopulation / 100000);
 
-            currentPopulationInt = 1;
+            populationRatio = (currentPopulationAsFloat/maxPopulationAsFloat) * 10000;
 
-            //NetworkDebugger.Log("currentPopulation as int is: " + currentPopulationInt);
-
-            maxPopulationInt = 2;
-
-            //NetworkDebugger.Log("maxPopulation as int is: " + maxPopulationInt);
-            
-            populationRatio = currentPopulationInt / maxPopulationInt;
-
-            //NetworkDebugger.Log("PopulationRatio is: " + populationRatio);
+            Debug.Log("The populationRatio is: " + populationRatio);
 
             increaseMoney = populationRatio * updateRate * Time.deltaTime;
+
+            Debug.Log("The increaseMoney is: " + increaseMoney);
+
             currentMoney += increaseMoney;
 
-            //NetworkDebugger.Log("increaseMoney is: " + increaseMoney);
-            //NetworkDebugger.Log("currentMoney is: " + currentMoney);
-
-            //Call to method to update the money UI 
+            // Call to method to update the money UI 
             MoneyToText(currentMoney, textUI);
 
-            // Set timer
+            // Set timer for update
             nextUpdateTime += updateRateTime;
         }
     }
@@ -79,7 +76,7 @@ public class MoneyManager : MonoBehaviour
     {
         float previewMoney;
 
-        //update money UI with correct format
+        // Update money UI with correct format
         if ((currentMoney / 1000000000) > 1)
         {
             previewMoney = currentMoney / 1000000000;

@@ -23,9 +23,11 @@ public class SynchronizeResources : MonoBehaviour
 
     void Start()
     {
+        // Set variables for update rate
         updateRate = 0.5f;
         nextUpdateTime = updateRate;
 
+        // Set resource variables
         CO2Manage = GetComponent<CO2Manager>();
         MoneyManage = GetComponent<MoneyManager>();
         popVegManager = GetComponent<PopVegManager>();
@@ -42,6 +44,7 @@ public class SynchronizeResources : MonoBehaviour
             currentMoney = MoneyManage.currentMoney;
             currentPopulation = PopVegManager.totalPop;
 
+            // Start network-wide call for all clients to synchronize resource levels
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("Synchronize", RpcTarget.Others, currentCO2, currentMoney, currentPopulation);
@@ -52,6 +55,7 @@ public class SynchronizeResources : MonoBehaviour
         }
     }
 
+    // Method for all clients to synchronize resources according to Master client
     [PunRPC]
     void Synchronize(float CO2, float Money, long Population)
     {
@@ -62,17 +66,5 @@ public class SynchronizeResources : MonoBehaviour
         CO2ManageSynch.currentCO2 = CO2;
         MoneyManageSynch.currentMoney = Money;
         PopVegManager.totalPop = Population;
-
-        //NetworkDebugger.Log("CO2 value on other device: " + CO2);
-        //NetworkDebugger.Log("CO2 value on other device: " + CO2ManageSynch.currentCO2);
-        //NetworkDebugger.Log("Money value on other device: " + Money);
-        //NetworkDebugger.Log("Money value on other device: " + MoneyManageSynch.currentMoney);
-        //NetworkDebugger.Log("Population value on other device: " + Population);
-        //NetworkDebugger.Log("Population PopVegManager value on other device: " + PopVegManager.totalPop);
-
-        //NetworkDebugger.Log("Population UI value on other device: " + popSlider.value);
-        //NetworkDebugger.Log("Population UI maxValue on other device: " + popSlider.maxValue);
-
-
     }
 }

@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.IO;
+using System.Globalization;
 
 public class PopVegManager : MonoBehaviour
 {
-    //Variabels for updating UI
+    // Variabels for updating UI
     public Slider popSlider;
     
     // Within that radius, there are some injuries.
@@ -24,7 +25,7 @@ public class PopVegManager : MonoBehaviour
     public static float[][] veg_table;
     public static float totalVeg = 0;
 
-    // All necessary CO2 information
+    // All necessary CO2 variables
     private CO2Manager CO2Manage;
     private float CO2CurrentValue;
     private float CO2Ratio;
@@ -64,7 +65,7 @@ public class PopVegManager : MonoBehaviour
                         }
                         else
                         {
-                            pop_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ","));
+                            pop_table[179 - k][i - 1] = float.Parse(values[i], NumberStyles.Float, new CultureInfo("en-US"));
                         }
 
                     }
@@ -90,7 +91,7 @@ public class PopVegManager : MonoBehaviour
                         }
                         else
                         {
-                            veg_table[179 - k][i - 1] = float.Parse(values[i].Replace(".", ",")) + 0.1f;
+                            veg_table[179 - k][i - 1] = float.Parse(values[i], NumberStyles.Float, new CultureInfo("en-US")) + 0.1f;
                         }
                     }
                     k += 1;
@@ -130,8 +131,14 @@ public class PopVegManager : MonoBehaviour
         if (Time.time > nextUpdateTime)
         {
             // Have population increase automatically over time, rate dependent on CO2 levels
-            CO2Ratio = ((CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue) * 1000000;
+            CO2CurrentValue = CO2Manage.currentCO2;
+            CO2Ratio = ((CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue) * 500000;
+
             increasePop = popIncreaseRate * CO2Ratio * Time.deltaTime;
+
+            Debug.Log("The CO2Ratio is: " + CO2Ratio);
+            Debug.Log("The increasePop is: " + increasePop);
+
             totalPop += Convert.ToInt64(increasePop);
 
             if (!haveTotalPopulation)
