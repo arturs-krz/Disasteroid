@@ -17,7 +17,7 @@ public class GameControl : MonoBehaviour
     private Image populationSliderFill;
     private Image CO2SliderFill;
 
-    private bool OpenWindow;
+    //private bool OpenWindow;
     int MaxVal = 100;
 
     // Start is called before the first frame update
@@ -54,7 +54,8 @@ public class GameControl : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Escape))
         {
-            OpenWindow = true;
+            Time.timeScale = 0;
+            GameOver();
         }
 
         Color colorPD = Color.Lerp(MinColor, MaxColor, (float)PD.value / MaxVal);
@@ -64,15 +65,4 @@ public class GameControl : MonoBehaviour
         CO2.gameObject.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = colorCO2;
 
     }
-
-    private void OnGUI()
-    {
-        if (OpenWindow)
-        {
-            Time.timeScale = 0;
-            GameOver();
-
-        }
-    }
-
 }
