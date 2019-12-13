@@ -13,7 +13,7 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     private RoomInfo gameRoom = null;
 
     public bool connected { get; private set; } = false;
-    public int numPlayers { get; private set; } = 0;
+    public int numPlayers { get; private set; } = 1;
 
     public delegate void JoinEventHandler(bool isMaster);
     public static event JoinEventHandler OnJoinGame;
