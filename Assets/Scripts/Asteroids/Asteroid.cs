@@ -38,6 +38,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     public GameObject lineRendererPrefab;
     private GameObject lineRendererObjInstance = null;
     private LineRenderer pathLineRenderer;
+    private bool needsOrbitRecalculation = false;
 
     private PopVegManager popVegManager;
 
@@ -143,7 +144,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             // Compensate position
             transform.localPosition = transform.localPosition + ARController.Instance.earthMarker.transform.InverseTransformDirection(rb.velocity * lag);
 
-            if (lineRendererObjInstance == null)
+            if (lineRendererObjInstance == null || needsOrbitRecalculation)
             {
                 // Compute orbit locally on the first network update
                 ComputePredictedOrbitLocal();
@@ -151,6 +152,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
                 lineRendererObjInstance.transform.SetParent(ARController.Instance.earthMarker.transform);
                 lineRendererObjInstance.transform.localPosition = new Vector3(0,0,0);
                 lineRendererObjInstance.transform.localRotation = Quaternion.identity;
+                needsOrbitRecalculation = false;
             }
         }
     }
@@ -172,6 +174,12 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
             // Forced perspective. Make it appear slightly smaller if it's close to earth.
             transform.localScale = baseScale * Mathf.Clamp((earthPos.magnitude / initialEarthPos.magnitude) + 0.5f, 0.5f, 1.0f);
+
+            if (needsOrbitRecalculation)
+            {
+                needsOrbitRecalculation = false;
+                ComputePredictedOrbit();
+            }
         }
 
         if (pathLineRenderer != null && pathLineRenderer.positionCount > 0) {
@@ -215,6 +223,23 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             PhotonNetwork.Destroy(gameObject);
             AsteroidSpawner.numberOfAsteroids -= 1;
         }
+    }
+
+    public void AffectByExplosion(float force, Vector3 position, float radius)
+    {
+        if (photonView.IsMine)
+        {
+            rb.AddExplosionForce(force, position, radius, 0f, ForceMode.Impulse);
+            photonView.RPC("RecalculateOrbitPath", RpcTarget.Others);
+
+            needsOrbitRecalculation = true;
+        }
+    }
+
+    [PunRPC]
+    void RecalculateOrbitPath()
+    {
+        needsOrbitRecalculation = true;
     }
 
     public List<Vector3> ComputePredictedOrbit()

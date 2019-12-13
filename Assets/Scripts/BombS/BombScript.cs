@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class BombScript : MonoBehaviourPun
+public class BombScript : MonoBehaviourPun, IPunObservable
 {
 
 
     public GameObject explosionEffect;
-    public GameObject propellers;
+    //public GameObject propellers;
     private GameObject targetAsteroid;
+    private Rigidbody targetRb;
+
+    private ParticleSystem propulsion;
 
     // speed in which the bomb goes towards the target
-    public float speed = 2f;
-    public float radius = 1f;
-    public float force = 0.1f;
+    private float speed = 0.75f;
+    private float radius = 1.5f;
+    private float force = 0.15f;
 
-    private int bombCost;
 
-    public float range = 1f;
-    public float delay = 3f;
+    private float range = 1f;
+    private float delay = 2f;
     private float countdown;
 
     private Rigidbody rb;
@@ -28,14 +30,11 @@ public class BombScript : MonoBehaviourPun
     bool hasExploded = false;
     bool targetFound = false;
 
-    Vector3 position = new Vector3(0f, 0f, 0f);
-    Vector3 aposition = new Vector3(0f, 0f, 0f);
-
     public void Start()
     {
         rb = GetComponent<Rigidbody>();
-        bombCost = 5000;
-
+        propulsion = transform.GetChild(0).GetComponent<ParticleSystem>();
+ 
         // if (PhotonNetwork.IsMasterClient)
         // {
         //     PhotonView photonView = PhotonView.Get(this);
@@ -45,39 +44,75 @@ public class BombScript : MonoBehaviourPun
         countdown = delay;
 
         // On all phones
-        if (!PhotonNetwork.IsMasterClient)
+        if (!photonView.IsMine)
         {
             Vector3 localPosition = transform.position;
             Quaternion localRotation = transform.rotation;
 
             transform.SetParent(ARController.Instance.earthMarker.transform);
             transform.localPosition = localPosition;
-            transform.localRotation = localRotation;
-            position = transform.position;
+            transform.localRotation = localRotation;   
         }
-
         SeekClosest();
     }
 
     void Update()
     {
-        countdown -= Time.deltaTime;
-        if (countdown <= 0f && hasExploded == false  && photonView.IsMine)
+        if (photonView.IsMine)
         {
-            Explode();
-        }
-
-        if (targetFound == true)
-        {
-            Vector3 direction = targetAsteroid.transform.position - transform.position;
-            transform.LookAt(targetAsteroid.transform.position);
-            // rb.AddForce(direction.normalized * 0.5f);
-            transform.Translate(direction.normalized * speed * Time.deltaTime);
-
-            if (direction.magnitude < 0.2f && photonView.IsMine)
+            countdown -= Time.deltaTime;
+            if (countdown <= 0f && hasExploded == false)
             {
                 Explode();
             }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (photonView.IsMine)
+        {
+            if (targetAsteroid != null)
+            {
+                Vector3 direction = targetAsteroid.transform.position - transform.position;
+                transform.LookAt(targetAsteroid.transform.position);
+                rb.velocity = direction.normalized * speed;
+
+                if (direction.magnitude < 0.05f)
+                {
+                    Explode();
+                }
+            }
+        }
+        else
+        {
+            if (targetAsteroid != null)
+            {
+                Vector3 direction = (targetAsteroid.transform.position + (targetRb.velocity * Time.fixedDeltaTime)) - transform.position;
+                transform.LookAt(targetAsteroid.transform.position);
+                transform.localPosition += transform.InverseTransformDirection(direction.normalized) * speed * Time.fixedDeltaTime;
+                //rb.velocity = direction.normalized * speed;
+            }
+        }
+        
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(rb.velocity);
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+        }
+        else
+        {
+            rb.velocity = ARController.Instance.earthMarker.transform.InverseTransformDirection((Vector3)stream.ReceiveNext());
+            transform.localPosition = (Vector3)stream.ReceiveNext();
+            transform.localRotation = (Quaternion)stream.ReceiveNext();
+
+            float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
+            transform.localPosition = transform.localPosition + ARController.Instance.earthMarker.transform.InverseTransformDirection(rb.velocity * lag);
         }
     }
 
@@ -91,34 +126,34 @@ public class BombScript : MonoBehaviourPun
         float d = range;
         foreach (GameObject nearbyAsteroid in AsteroidSpawner.asteroidInstances)
         {
-            float d1 = Vector3.Distance(position, nearbyAsteroid.transform.position);
+            float d1 = Vector3.Distance(transform.position, nearbyAsteroid.transform.position);
             if (d1 <= d)
             {
                 d = d1;
                 targetAsteroid = nearbyAsteroid;
+                targetRb = targetAsteroid.GetComponent<Rigidbody>();
                 targetFound = true;
+
+                propulsion.Play();
             }
         }
 
         if (targetFound == false)
         {
-            rb.angularVelocity = new Vector3(Random.value * 0.2f, Random.value * 0.2f, Random.value * 0.2f);
+            rb.velocity = transform.forward * speed * 0.1f;
         }
     }
 
     void Explode()
     {   
-        if (PhotonNetwork.IsMasterClient)
+        if (photonView.IsMine)
         {
             foreach (GameObject nearbyAsteroid in AsteroidSpawner.asteroidInstances)
             {
-                // add force -> move
-                Rigidbody rb = nearbyAsteroid.GetComponent<Rigidbody>();
-                if (rb != null)
+                if ((nearbyAsteroid.transform.position - transform.position).magnitude < radius)
                 {
-                    rb.AddExplosionForce(force, transform.position, radius);
+                    nearbyAsteroid.GetComponent<Asteroid>().AffectByExplosion(force, transform.position, radius);
                 }
-                // damage
             }
             PhotonNetwork.Instantiate("DustExplosion", transform.position, transform.rotation);
             PhotonNetwork.Destroy(gameObject);

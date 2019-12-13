@@ -11,6 +11,9 @@ public class SatelliteSpawner : MonoBehaviourPun
 
     private MoneyManager moneyManager;
 
+    private float startTime;
+    private bool showedInfo = false;
+
     public void Awake()
     {
         if (_instance != null && _instance != this)
@@ -27,6 +30,14 @@ public class SatelliteSpawner : MonoBehaviourPun
     void Start()
     {
         moneyManager = GameObject.FindWithTag("ResourceManager").GetComponent<MoneyManager>();
+
+        PhotonGameLobby.OnJoinGame += (isMaster) =>
+        {
+            if (!isMaster)
+            {
+                startTime = Time.time;
+            }
+        };
     }
 
     public static void SpawnSatellite()
@@ -55,7 +66,11 @@ public class SatelliteSpawner : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        
+        if (!showedInfo && Time.time - startTime > 10f && !PhotonNetwork.IsMasterClient)
+        {
+            showedInfo = true;
+            UIMessage.ShowMessage("Spawn defensive satellite by scanning the marker!");
+        }
     }
 
     [PunRPC]

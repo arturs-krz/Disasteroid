@@ -211,10 +211,9 @@ public class PopVegManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Hit " + latitude + ";" + longitude + ": " + number_of_dead + " dead.");
+        //Debug.Log("Hit " + latitude + ";" + longitude + ": " + number_of_dead + " dead.");
         totalPop -= (number_of_dead);
         totalVeg -= dead_vegetation;
-        // NetworkDebugger.Log("totalPop after explosion is: " + totalPop);
 
         return totalPop;
     }

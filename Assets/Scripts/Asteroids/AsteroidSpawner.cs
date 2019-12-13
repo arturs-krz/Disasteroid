@@ -18,6 +18,8 @@ public class AsteroidSpawner : MonoBehaviour
     private bool hasEarthPosition = false;
     private System.Random rd;
 
+    private int MAX_ASTEROIDS = 3;
+    private float spawnTimer = 3f;
     public void Awake()
     {
         if (_instance != null && _instance != this)
@@ -48,7 +50,16 @@ public class AsteroidSpawner : MonoBehaviour
         // Run asteroid spawn logic (and updates) only on the master client
         if (PhotonNetwork.IsMasterClient)
         {
-            if (hasEarthPosition && numberOfAsteroids < 3)
+            if (PhotonGameLobby.Instance.numPlayers > 0 && numberOfAsteroids < MAX_ASTEROIDS)
+            {
+                spawnTimer -= Time.deltaTime;
+            }
+
+            if (hasEarthPosition
+                && numberOfAsteroids < MAX_ASTEROIDS
+                && PhotonGameLobby.Instance.numPlayers > 0
+                && spawnTimer < 0f
+            )
             {
                 float distance = 1.8f + 0.6f * (float)rd.NextDouble();
 
@@ -79,10 +90,19 @@ public class AsteroidSpawner : MonoBehaviour
                 rigidbody.angularVelocity = angularVelocity;
                 rigidbody.velocity = velocity;
 
-                numberOfAsteroids += 1;
 
                 Vector3 asteroidScale = spawnedAsteroid.transform.localScale + (spawnedAsteroid.transform.localScale * ((float)rd.NextDouble() * 0.5f));
                 spawnedAsteroid.GetComponent<Asteroid>().SetInitialScale(asteroidScale);
+
+                numberOfAsteroids += 1;
+                if (numberOfAsteroids < MAX_ASTEROIDS)
+                {
+                    spawnTimer = 2f + GenerateRandomOffset(2f);
+                }
+                else
+                {
+                    spawnTimer = 1f + GenerateRandomOffset(0.5f);
+                }
 
                 //float xPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));
                 //float zPos = (rd.NextDouble() > 0.5 ? 1 : -1) * (0.1f + (0.2f * (float)rd.NextDouble()));

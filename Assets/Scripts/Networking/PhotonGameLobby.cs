@@ -13,6 +13,7 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
     private RoomInfo gameRoom = null;
 
     public bool connected { get; private set; } = false;
+    public int numPlayers { get; private set; } = 0;
 
     public delegate void JoinEventHandler(bool isMaster);
     public static event JoinEventHandler OnJoinGame;
@@ -126,6 +127,19 @@ public class PhotonGameLobby : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        Debug.Log("Player " + newPlayer.ActorNumber + " joined the game!");
+        if (!newPlayer.IsMasterClient)
+        {
+            Debug.Log("Player " + newPlayer.ActorNumber + " joined the game!");
+            numPlayers += 1;
+        }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        if (!otherPlayer.IsMasterClient)
+        {
+            Debug.Log("Player " + otherPlayer.ActorNumber + " left the game!");
+            numPlayers = Mathf.Max(numPlayers - 1, 0);
+        }
     }
 }
