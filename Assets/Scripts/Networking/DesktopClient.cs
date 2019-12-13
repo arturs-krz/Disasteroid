@@ -10,6 +10,8 @@ public class DesktopClient : MonoBehaviour
     private CO2Manager CO2manager;
     private MoneyManager moneyManager;
 
+    public GameObject gameOverScreen;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +56,8 @@ public class DesktopClient : MonoBehaviour
             CO2manager.currentCO2 = 20;
             PopVegManager.totalPop = PopVegManager.initialPop;
             moneyManager.currentMoney = 10000000000;
+            PopVegManager.gameOver = false;
+            gameOverScreen.SetActive(false);
         }
     }
 }

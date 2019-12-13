@@ -44,6 +44,9 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
 
     public static float force = 0.05f;
 
+    private float spawnTime;
+    private bool isActive = true;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();     
@@ -65,6 +68,8 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             baseScale = transform.localScale;
 
             ComputePredictedOrbit();
+
+            spawnTime = Time.time;
 
             //List<Vector3> pathPositions = ComputePredictedOrbit();
             //if (pathPositions.Count < 2000)
@@ -88,7 +93,11 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
-
+        if (isActive && Time.time - spawnTime > 60f)
+        {
+            AsteroidSpawner.numberOfAsteroids -= 1;
+            isActive = false;
+        }
     }
 
     void OnDestroy()
@@ -299,6 +308,11 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
         positions.Add(transform.localPosition);
         float time = t;
 
+        if (lineRendererObjInstance != null)
+        {
+            Destroy(lineRendererObjInstance);
+        }
+
         Collider earthCollider = ARController.Instance.earthInstance.transform.GetComponentInChildren<SphereCollider>();
         while (earthCollider.ClosestPoint(position) != position)
         {
@@ -314,10 +328,7 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
                 return positions;
             }
         }
-        if (lineRendererObjInstance != null)
-        {
-            Destroy(lineRendererObjInstance);
-        }
+        
         lineRendererObjInstance = Instantiate(lineRendererPrefab);
 
         pathLineRenderer = lineRendererObjInstance.GetComponent<LineRenderer>();

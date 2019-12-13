@@ -35,7 +35,7 @@ public class MoneyManager : MonoBehaviour
         maxPopulationAsFloat = Convert.ToSingle(maxPopulation/100000);
 
         currentMoney = 10000000000;
-        updateRate = 10000;
+        updateRate = 20000;
 
         MoneyToText(currentMoney, textUI);
 

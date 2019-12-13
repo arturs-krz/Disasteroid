@@ -17,6 +17,8 @@ public class PopVegManager : MonoBehaviour
     // Within that radius, everyone dies.
     public int exterminationRadius;
 
+    public GameObject gameOverScreen;
+
     [HideInInspector]
     // pop_table is a tab with dimensions 180 x 360
     // pop_table[i][j] corresponds to the population density of the lattitude i-89.5 and longitude j-179.5
@@ -25,6 +27,8 @@ public class PopVegManager : MonoBehaviour
     public static long initialPop = 0;
     public static float[][] veg_table;
     public static float totalVeg = 0;
+
+    public static bool gameOver = false;
 
     // All necessary CO2 variables
     private CO2Manager CO2Manage;
@@ -135,6 +139,10 @@ public class PopVegManager : MonoBehaviour
             // Have population increase automatically over time, rate dependent on CO2 levels
             CO2CurrentValue = CO2Manage.currentCO2;
             CO2Ratio = ((CO2CriticalValue - CO2CurrentValue) / CO2CriticalValue) * 500000;
+            if (CO2CurrentValue > 99)
+            {
+                CO2Ratio = CO2Ratio * 10;
+            }
 
             increasePop = popIncreaseRate * CO2Ratio * Time.deltaTime;
 
@@ -154,6 +162,12 @@ public class PopVegManager : MonoBehaviour
 
             // Update population UI
             popSlider.value = totalPop;
+
+            if (totalPop < 100 && gameOver == false)
+            {
+                gameOver = true;
+                gameOverScreen.SetActive(true);
+            }
             
             // Set timer
             nextUpdateTime = Time.time + updateRate;

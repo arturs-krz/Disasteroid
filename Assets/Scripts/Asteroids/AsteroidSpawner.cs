@@ -59,6 +59,7 @@ public class AsteroidSpawner : MonoBehaviour
                 && numberOfAsteroids < MAX_ASTEROIDS
                 && PhotonGameLobby.Instance.numPlayers > 0
                 && spawnTimer < 0f
+                && !PopVegManager.gameOver
             )
             {
                 float distance = 1.8f + 0.6f * (float)rd.NextDouble();

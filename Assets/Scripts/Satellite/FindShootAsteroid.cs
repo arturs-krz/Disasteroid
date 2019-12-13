@@ -118,7 +118,7 @@ public class FindShootAsteroid : MonoBehaviourPun
         Vector3 rotation = partToRotate.transform.InverseTransformDirection(lookRotation.eulerAngles);
 
         //Rotate around Z axis only (the gun part is rotated so Z is pointing vertically)
-        partToRotate.localRotation = Quaternion.Euler(partToRotate.localRotation.eulerAngles.x, 0f, rotation.y);
+        partToRotate.localRotation = Quaternion.Euler(partToRotate.localRotation.eulerAngles.x, 0f, rotation.z);
 
         //Check if it is time to fire. If it is, shoot and reset fireCountDown
         if (fireCountdown <= 0f && ammo > 0) {
