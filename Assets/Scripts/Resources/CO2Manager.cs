@@ -49,6 +49,8 @@ public class CO2Manager : MonoBehaviour
 
             // Set timer
             nextUpdateTime += updateRate;
+
+            Shader.SetGlobalFloat("_CO2", currentCO2/ maxCO2);
         }
     }
 }

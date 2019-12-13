@@ -214,10 +214,9 @@ public class Asteroid : MonoBehaviourPun, IPunObservable
             //Debug.Log( nOfDead + " people died, " + "Total Population: " + PopVegManager.totalPop +"; " + dead_veg + " vegetation index burned, Remaining vegetation index: " + PopVegManager.totalVeg);
 
             // Increase CO2 value upon impact
-            if (CO2Manage.currentCO2 < (CO2Manage.maxCO2-CO2Manage.impactCO2))
-            {
-                CO2Manage.currentCO2 += CO2Manage.impactCO2;
-            }
+     
+           CO2Manage.currentCO2 = Mathf.Min(CO2Manage.currentCO2 + CO2Manage.impactCO2, 100);
+            
 
             // Destroy asteroid after impact
             PhotonNetwork.Destroy(gameObject);
