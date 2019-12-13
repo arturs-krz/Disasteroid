@@ -2981,8 +2981,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popSlider: {fileID: 1012645276234827792}
-  effectRadius: 35
-  exterminationRadius: 16
+  effectRadius: 38
+  exterminationRadius: 18
 --- !u!114 &3990384874250801822
 MonoBehaviour:
   m_ObjectHideFlags: 0

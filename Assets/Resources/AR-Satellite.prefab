@@ -131,8 +131,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14254992182abca47b6fd6fea72f5468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  range: 1
-  fireRate: 1
   turnSpeed: 3
   ammo: 10
   asteroidTag: Asteroid

@@ -9,8 +9,8 @@ public class FindShootAsteroid : MonoBehaviourPun
 
     [Header("Attributes")]
 
-    public float range = 15f;
-    public float fireRate = 1f;
+    private float range = 2f;
+    private float fireRate = 1f;
     private float fireCountdown = 0f;
     public float turnSpeed = 2f;
     public int ammo = 10;
@@ -114,10 +114,11 @@ public class FindShootAsteroid : MonoBehaviourPun
         //Convert from Quaternion to euler angle
         //Lerp for smooth transitions
         //Vector3 rotation = lookRotation.eulerAngles;
-        Vector3 rotation = partToRotate.InverseTransformDirection(Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles);
+        // Vector3 rotation = partToRotate.transform.InverseTransformDirection(Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles);
+        Vector3 rotation = partToRotate.transform.InverseTransformDirection(lookRotation.eulerAngles);
 
         //Rotate around Z axis only (the gun part is rotated so Z is pointing vertically)
-        partToRotate.localRotation = Quaternion.Euler(partToRotate.localRotation.eulerAngles.x, 0f, rotation.z);
+        partToRotate.localRotation = Quaternion.Euler(partToRotate.localRotation.eulerAngles.x, 0f, rotation.y);
 
         //Check if it is time to fire. If it is, shoot and reset fireCountDown
         if (fireCountdown <= 0f && ammo > 0) {

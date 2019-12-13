@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class BombScript : MonoBehaviourPun, IPunObservable
+public class BombScript : MonoBehaviourPun
 {
 
 
@@ -90,31 +90,31 @@ public class BombScript : MonoBehaviourPun, IPunObservable
             {
                 Vector3 direction = (targetAsteroid.transform.position + (targetRb.velocity * Time.fixedDeltaTime)) - transform.position;
                 transform.LookAt(targetAsteroid.transform.position);
-                transform.localPosition += transform.InverseTransformDirection(direction.normalized) * speed * Time.fixedDeltaTime;
+                transform.localPosition += ARController.Instance.earthMarker.transform.InverseTransformDirection(direction.normalized) * speed * Time.fixedDeltaTime;
                 //rb.velocity = direction.normalized * speed;
             }
         }
         
     }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(rb.velocity);
-            stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
-        }
-        else
-        {
-            rb.velocity = ARController.Instance.earthMarker.transform.InverseTransformDirection((Vector3)stream.ReceiveNext());
-            transform.localPosition = (Vector3)stream.ReceiveNext();
-            transform.localRotation = (Quaternion)stream.ReceiveNext();
+    // public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    // {
+    //     // if (stream.IsWriting)
+    //     // {
+    //     //     stream.SendNext(rb.velocity);
+    //     //     stream.SendNext(transform.position);
+    //     //     stream.SendNext(transform.rotation);
+    //     // }
+    //     // else
+    //     // {
+    //     //     rb.velocity = ARController.Instance.earthMarker.transform.InverseTransformDirection((Vector3)stream.ReceiveNext());
+    //     //     transform.localPosition = (Vector3)stream.ReceiveNext();
+    //     //     transform.localRotation = (Quaternion)stream.ReceiveNext();
 
-            float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
-            transform.localPosition = transform.localPosition + ARController.Instance.earthMarker.transform.InverseTransformDirection(rb.velocity * lag);
-        }
-    }
+    //     //     float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
+    //     //     transform.localPosition = transform.localPosition + ARController.Instance.earthMarker.transform.InverseTransformDirection(rb.velocity * lag);
+    //     // }
+    // }
 
     //void StartPropellers()
     //{
